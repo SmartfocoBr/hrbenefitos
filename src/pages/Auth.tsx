@@ -174,7 +174,7 @@ const Auth = () => {
             <img 
               src={logo} 
               alt="BenefitOS" 
-              className="h-16 w-auto max-w-[280px] object-contain brightness-0 invert drop-shadow-2xl" 
+              className="h-12 w-auto max-w-[240px] object-contain brightness-0 invert drop-shadow-2xl" 
             />
           </div>
 
@@ -222,7 +222,7 @@ const Auth = () => {
             <img 
               src={logo} 
               alt="BenefitOS" 
-              className="h-14 w-auto max-w-[200px] object-contain drop-shadow-xl" 
+              className="h-10 w-auto max-w-[180px] object-contain drop-shadow-xl" 
             />
           </div>
 
