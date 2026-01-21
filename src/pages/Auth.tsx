@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Eye, EyeOff, Mail, Lock, ArrowRight, Building2, Users, TrendingUp, Shield } from "lucide-react";
 import { z } from "zod";
-import logo from "@/assets/benefitos-logo.png";
+
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 const emailSchema = z.string().email("Email inválido");
@@ -171,11 +171,9 @@ const Auth = () => {
         <div className="relative z-10 flex flex-col justify-between w-full p-12">
           {/* Logo - Destacado e maior */}
           <div className="flex items-center gap-4">
-            <img 
-              src={logo} 
-              alt="BenefitOS" 
-              className="h-12 w-auto max-w-[240px] object-contain brightness-0 invert drop-shadow-2xl" 
-            />
+            <span className="text-4xl font-bold text-primary-foreground font-sans tracking-tight drop-shadow-2xl">
+              BenefitOS<span className="text-accent">.</span>
+            </span>
           </div>
 
           {/* Main content */}
@@ -219,11 +217,9 @@ const Auth = () => {
         <div className="w-full max-w-md space-y-8 animate-fade-in">
           {/* Mobile logo - Destacado */}
           <div className="lg:hidden flex justify-center mb-8">
-            <img 
-              src={logo} 
-              alt="BenefitOS" 
-              className="h-10 w-auto max-w-[180px] object-contain drop-shadow-xl" 
-            />
+            <span className="text-3xl font-bold text-foreground font-sans tracking-tight drop-shadow-xl">
+              BenefitOS<span className="text-accent">.</span>
+            </span>
           </div>
 
           <div className="text-center space-y-3">
