@@ -1,39 +1,13 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient, SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const HR_SYSTEM_PROMPT = `Você é o assistente virtual de RH da Benefitos, uma plataforma de gestão de benefícios corporativos. Seu nome é Beni.
-
-Você tem conhecimento sobre:
-
-**BENEFÍCIOS DISPONÍVEIS:**
-- Vale Refeição (VR): R$ 850/mês, aceito em restaurantes e lanchonetes
-- Vale Alimentação (VA): R$ 380/mês, aceito em supermercados
-- Vale Transporte (VT): Desconto de até 6% do salário
-- Plano de Saúde: Bradesco Saúde, cobertura nacional
-- Plano Odontológico: Amil Dental, inclui ortodontia
-- Wellhub (academia): Acesso a 50.000+ academias
-- Saúde Mental: Zenklub - sessões de terapia online
-- Auxílio Home Office: R$ 150/mês para trabalho remoto
-- Seguro de Vida: SulAmérica, cobertura de 24x salário
-- PLR: Participação nos lucros, pago semestralmente
-- Auxílio Creche: Até R$ 600/mês para filhos até 6 anos
-- Auxílio Educação: Até R$ 500/mês para cursos e graduação
-- Previdência Privada: Match de 100% até 4% do salário
-
-**POLÍTICAS IMPORTANTES:**
-- Período de carência: 90 dias para benefícios de saúde
-- Dependentes: Cônjuge e filhos até 24 anos (se estudantes)
-- Inclusão de dependentes: Via portal do colaborador
-- Alterações de benefícios: Janela mensal entre dias 1-5
-
-**CONTATOS ÚTEIS:**
-- RH: rh@benefitos.com.br
-- Suporte Benefícios: 0800-123-4567
-- Portal do Colaborador: portal.benefitos.com.br
+// Generic HR assistant prompt without sensitive company data
+const HR_SYSTEM_PROMPT_BASE = `Você é o assistente virtual de RH da Benefitos, uma plataforma de gestão de benefícios corporativos. Seu nome é Beni.
 
 **REGRAS DE RESPOSTA:**
 1. Seja sempre educado, empático e profissional
@@ -42,7 +16,120 @@ Você tem conhecimento sobre:
 4. Para questões sensíveis (demissão, assédio), recomende falar diretamente com RH
 5. Forneça informações práticas e acionáveis
 6. Use emojis moderadamente para tornar a conversa mais amigável
-7. Responda sempre em português brasileiro`;
+7. Responda sempre em português brasileiro
+
+**CONTATOS ÚTEIS:**
+- RH: rh@benefitos.com.br
+- Portal do Colaborador: portal.benefitos.com.br`;
+
+// Input validation schema
+interface ChatMessage {
+  role: "user" | "assistant";
+  content: string;
+}
+
+function validateMessages(messages: unknown): { valid: boolean; error?: string; data?: ChatMessage[] } {
+  if (!Array.isArray(messages)) {
+    return { valid: false, error: "Mensagens devem ser um array" };
+  }
+
+  if (messages.length === 0) {
+    return { valid: false, error: "Pelo menos uma mensagem é necessária" };
+  }
+
+  if (messages.length > 20) {
+    return { valid: false, error: "Máximo de 20 mensagens permitido" };
+  }
+
+  const validatedMessages: ChatMessage[] = [];
+
+  for (const msg of messages) {
+    if (typeof msg !== "object" || msg === null) {
+      return { valid: false, error: "Formato de mensagem inválido" };
+    }
+
+    const { role, content } = msg as Record<string, unknown>;
+
+    if (role !== "user" && role !== "assistant") {
+      return { valid: false, error: "Role deve ser 'user' ou 'assistant'" };
+    }
+
+    if (typeof content !== "string") {
+      return { valid: false, error: "Conteúdo deve ser uma string" };
+    }
+
+    if (content.length === 0) {
+      return { valid: false, error: "Conteúdo não pode ser vazio" };
+    }
+
+    if (content.length > 2000) {
+      return { valid: false, error: "Conteúdo máximo de 2000 caracteres por mensagem" };
+    }
+
+    validatedMessages.push({
+      role: role as "user" | "assistant",
+      content: content.trim().slice(0, 2000),
+    });
+  }
+
+  return { valid: true, data: validatedMessages };
+}
+
+// Build dynamic system prompt with user's company benefits
+async function buildSystemPrompt(supabase: SupabaseClient, userId: string): Promise<string> {
+  let dynamicContent = "";
+
+  try {
+    // Get user's company through employee record
+    const { data: employee } = await supabase
+      .from("employees")
+      .select("company_id")
+      .eq("user_id", userId)
+      .maybeSingle();
+
+    if (employee?.company_id) {
+      // Get company benefit policies
+      const { data: policies } = await supabase
+        .from("company_benefit_policies")
+        .select("monthly_limit, min_tenure_days, contract_types, is_enabled, benefit_id")
+        .eq("company_id", employee.company_id)
+        .eq("is_enabled", true);
+
+      if (policies && policies.length > 0) {
+        // Get benefit details separately
+        const benefitIds = policies.map(p => p.benefit_id);
+        const { data: benefits } = await supabase
+          .from("benefits")
+          .select("id, name, category, description, provider")
+          .in("id", benefitIds);
+
+        if (benefits && benefits.length > 0) {
+          const benefitMap = new Map(benefits.map(b => [b.id, b]));
+          
+          dynamicContent = "\n\n**BENEFÍCIOS DISPONÍVEIS NA SUA EMPRESA:**\n";
+          for (const policy of policies) {
+            const benefit = benefitMap.get(policy.benefit_id);
+            if (benefit) {
+              dynamicContent += `- ${benefit.name}`;
+              if (policy.monthly_limit) {
+                dynamicContent += ` (limite: R$ ${Number(policy.monthly_limit).toLocaleString("pt-BR")}/mês)`;
+              }
+              if (benefit.provider) {
+                dynamicContent += ` - ${benefit.provider}`;
+              }
+              dynamicContent += "\n";
+            }
+          }
+        }
+      }
+    }
+  } catch (error) {
+    console.error("Error loading company benefits:", error);
+    // Continue with base prompt if loading fails
+  }
+
+  return HR_SYSTEM_PROMPT_BASE + dynamicContent;
+}
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -50,10 +137,66 @@ serve(async (req) => {
   }
 
   try {
-    const { messages } = await req.json();
-    
-    console.log("Received messages:", messages?.length);
+    // 1. Validate Authorization header
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      console.error("Missing or invalid Authorization header");
+      return new Response(
+        JSON.stringify({ error: "Não autorizado. Faça login para usar o assistente." }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
 
+    // 2. Create Supabase client with user's token
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+    
+    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } },
+    });
+
+    // 3. Verify user by getting user data
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    
+    if (userError || !user) {
+      console.error("User verification failed:", userError);
+      return new Response(
+        JSON.stringify({ error: "Sessão inválida. Faça login novamente." }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const userId = user.id;
+    console.log("Authenticated user:", userId);
+
+    // 4. Parse and validate input
+    let requestBody: unknown;
+    try {
+      requestBody = await req.json();
+    } catch {
+      return new Response(
+        JSON.stringify({ error: "JSON inválido" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const { messages: rawMessages } = requestBody as { messages?: unknown };
+    const validation = validateMessages(rawMessages);
+    
+    if (!validation.valid) {
+      return new Response(
+        JSON.stringify({ error: validation.error }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const messages = validation.data!;
+    console.log("Validated messages count:", messages.length);
+
+    // 5. Build dynamic system prompt with user's company benefits
+    const systemPrompt = await buildSystemPrompt(supabase, userId);
+
+    // 6. Call AI gateway
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
       console.error("LOVABLE_API_KEY is not configured");
@@ -69,7 +212,7 @@ serve(async (req) => {
       body: JSON.stringify({
         model: "google/gemini-3-flash-preview",
         messages: [
-          { role: "system", content: HR_SYSTEM_PROMPT },
+          { role: "system", content: systemPrompt },
           ...messages,
         ],
         stream: true,
