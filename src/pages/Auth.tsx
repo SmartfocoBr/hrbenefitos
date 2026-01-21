@@ -154,27 +154,27 @@ const Auth = () => {
       </div>
       
       {/* Left Panel - Branding */}
-      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden" style={{ background: 'linear-gradient(135deg, hsl(222 47% 8%) 0%, hsl(222 47% 15%) 50%, hsl(188 94% 20%) 100%)' }}>
+      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden" style={{ background: 'linear-gradient(135deg, hsl(230 30% 6%) 0%, hsl(230 25% 14%) 50%, hsl(173 60% 18%) 100%)' }}>
         {/* Animated background elements */}
         <div className="absolute inset-0">
-          <div className="absolute top-20 left-20 w-72 h-72 bg-accent/10 rounded-full blur-3xl animate-pulse-subtle" />
-          <div className="absolute bottom-32 right-20 w-96 h-96 bg-accent/5 rounded-full blur-3xl animate-pulse-subtle animation-delay-300" />
+          <div className="absolute top-20 left-20 w-72 h-72 bg-accent/15 rounded-full blur-3xl animate-pulse-subtle" />
+          <div className="absolute bottom-32 right-20 w-96 h-96 bg-accent/8 rounded-full blur-3xl animate-pulse-subtle animation-delay-300" />
           <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-primary-foreground/5 rounded-full blur-3xl animate-float" />
         </div>
 
         {/* Grid pattern overlay */}
-        <div className="absolute inset-0 opacity-5" style={{
-          backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
-          backgroundSize: '50px 50px'
+        <div className="absolute inset-0 opacity-[0.03]" style={{
+          backgroundImage: `linear-gradient(rgba(255,255,255,0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.15) 1px, transparent 1px)`,
+          backgroundSize: '60px 60px'
         }} />
 
         <div className="relative z-10 flex flex-col justify-between w-full p-12">
-          {/* Logo - Destacado */}
+          {/* Logo - Destacado e maior */}
           <div className="flex items-center gap-4">
             <img 
               src={logo} 
               alt="BenefitOS" 
-              className="h-32 w-auto brightness-0 invert drop-shadow-2xl" 
+              className="h-16 w-auto max-w-[280px] object-contain brightness-0 invert drop-shadow-2xl" 
             />
           </div>
 
@@ -222,7 +222,7 @@ const Auth = () => {
             <img 
               src={logo} 
               alt="BenefitOS" 
-              className="h-40 w-auto drop-shadow-xl" 
+              className="h-14 w-auto max-w-[200px] object-contain drop-shadow-xl" 
             />
           </div>
 
