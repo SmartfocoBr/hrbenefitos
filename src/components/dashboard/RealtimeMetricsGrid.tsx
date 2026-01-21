@@ -2,6 +2,7 @@ import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { DashboardMetrics } from "@/hooks/useRealtimeDashboard";
 import { motion } from "framer-motion";
+import { SkeletonCard, SkeletonMetric } from "@/components/ui/skeleton";
 import { 
   Building2, 
   Users, 
@@ -123,6 +124,45 @@ export function RealtimeMetricsGrid({ metrics, isLoading }: RealtimeMetricsGridP
     },
   ];
 
+  // Show skeleton loading state
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <motion.div
+              key={`skeleton-card-${i}`}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.1 }}
+            >
+              <SkeletonCard />
+            </motion.div>
+          ))}
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <motion.div
+              key={`skeleton-metric-${i}`}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: (i + 4) * 0.1 }}
+            >
+              <SkeletonMetric />
+            </motion.div>
+          ))}
+        </div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.8 }}
+        >
+          <SkeletonCard className="h-32" />
+        </motion.div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* Primary Metrics */}
@@ -142,12 +182,7 @@ export function RealtimeMetricsGrid({ metrics, isLoading }: RealtimeMetricsGridP
               whileTap="tap"
             >
               <motion.div variants={hoverVariants}>
-                <Card
-                  className={cn(
-                    "p-4 card-elevated transition-shadow duration-300 hover:shadow-lg hover:shadow-accent/10 cursor-pointer",
-                    isLoading && "animate-pulse"
-                  )}
-                >
+                <Card className="p-4 card-elevated transition-shadow duration-300 hover:shadow-lg hover:shadow-accent/10 cursor-pointer">
                   <div className="flex items-center justify-between mb-3">
                     <motion.div 
                       className={cn("p-2 rounded-lg", card.bgColor)}
@@ -164,7 +199,7 @@ export function RealtimeMetricsGrid({ metrics, isLoading }: RealtimeMetricsGridP
                   </div>
                   <div className="space-y-1">
                     <p className="text-2xl font-bold text-foreground">
-                      {isLoading ? "..." : card.value}
+                      {card.value}
                       {card.total && (
                         <span className="text-sm font-normal text-muted-foreground ml-1">
                           / {card.total}
@@ -199,12 +234,7 @@ export function RealtimeMetricsGrid({ metrics, isLoading }: RealtimeMetricsGridP
               whileTap="tap"
             >
               <motion.div variants={hoverVariants}>
-                <Card
-                  className={cn(
-                    "p-4 card-elevated transition-shadow duration-300 hover:shadow-lg hover:shadow-accent/10 cursor-pointer",
-                    isLoading && "animate-pulse"
-                  )}
-                >
+                <Card className="p-4 card-elevated transition-shadow duration-300 hover:shadow-lg hover:shadow-accent/10 cursor-pointer">
                   <div className="flex items-center gap-3">
                     <motion.div 
                       className={cn("p-2 rounded-lg", card.bgColor)}
@@ -215,7 +245,7 @@ export function RealtimeMetricsGrid({ metrics, isLoading }: RealtimeMetricsGridP
                     </motion.div>
                     <div>
                       <p className="text-lg font-bold text-foreground">
-                        {isLoading ? "..." : card.value}
+                        {card.value}
                       </p>
                       <p className="text-xs text-muted-foreground">{card.title}</p>
                     </div>
@@ -256,7 +286,7 @@ export function RealtimeMetricsGrid({ metrics, isLoading }: RealtimeMetricsGridP
                 animate={{ scale: 1 }}
                 transition={{ type: "spring", stiffness: 400, damping: 15 }}
               >
-                {isLoading ? "..." : `${metrics.utilizationRate.toFixed(1)}%`}
+                {`${metrics.utilizationRate.toFixed(1)}%`}
               </motion.span>
             </div>
           </div>
