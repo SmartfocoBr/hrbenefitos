@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { useUserRole } from "@/hooks/useUserRole";
 import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
@@ -58,6 +59,7 @@ const AppSidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
   const { user, signOut } = useAuth();
+  const { roleLabel } = useUserRole();
 
   const NavLink = ({ item }: { item: NavItem }) => {
     const isActive = location.pathname === item.href;
@@ -166,7 +168,7 @@ const AppSidebar = () => {
                   {user?.email?.split("@")[0] || "Usuário"}
                 </p>
                 <p className="text-xs text-sidebar-foreground/60 truncate">
-                  Admin
+                  {roleLabel}
                 </p>
               </div>
               <Button

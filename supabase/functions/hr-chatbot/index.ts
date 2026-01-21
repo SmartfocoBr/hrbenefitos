@@ -6,6 +6,10 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// Rate limiting configuration
+const RATE_LIMIT_WINDOW = 3600; // 1 hour in seconds
+const RATE_LIMIT_MAX = 50; // Max requests per hour per user
+
 // Generic HR assistant prompt without sensitive company data
 const HR_SYSTEM_PROMPT_BASE = `Você é o assistente virtual de RH da Benefitos, uma plataforma de gestão de benefícios corporativos. Seu nome é Beni.
 
@@ -73,6 +77,74 @@ function validateMessages(messages: unknown): { valid: boolean; error?: string; 
   }
 
   return { valid: true, data: validatedMessages };
+}
+
+// Rate limiting check using service role client
+async function checkRateLimit(
+  serviceClient: SupabaseClient,
+  userId: string
+): Promise<{ allowed: boolean; error?: string }> {
+  const rateLimitKey = `chatbot:${userId}`;
+  const nowSeconds = Math.floor(Date.now() / 1000);
+
+  try {
+    // Get current rate limit entry
+    const { data: rateLimitData, error: fetchError } = await serviceClient
+      .from("rate_limits")
+      .select("count, window_start")
+      .eq("key", rateLimitKey)
+      .maybeSingle();
+
+    if (fetchError) {
+      console.error("Rate limit fetch error:", fetchError);
+      // Allow request on error (fail open for availability)
+      return { allowed: true };
+    }
+
+    if (rateLimitData) {
+      const windowStartSeconds = new Date(rateLimitData.window_start).getTime() / 1000;
+      const windowElapsed = nowSeconds - windowStartSeconds;
+
+      if (windowElapsed < RATE_LIMIT_WINDOW) {
+        // Still within rate limit window
+        if (rateLimitData.count >= RATE_LIMIT_MAX) {
+          const remainingMinutes = Math.ceil((RATE_LIMIT_WINDOW - windowElapsed) / 60);
+          return {
+            allowed: false,
+            error: `Você atingiu o limite de ${RATE_LIMIT_MAX} mensagens por hora. Tente novamente em ${remainingMinutes} minutos.`,
+          };
+        }
+
+        // Increment counter
+        await serviceClient
+          .from("rate_limits")
+          .update({ count: rateLimitData.count + 1 })
+          .eq("key", rateLimitKey);
+      } else {
+        // Window expired, reset counter
+        await serviceClient
+          .from("rate_limits")
+          .update({
+            count: 1,
+            window_start: new Date().toISOString(),
+          })
+          .eq("key", rateLimitKey);
+      }
+    } else {
+      // Create new rate limit entry
+      await serviceClient.from("rate_limits").insert({
+        key: rateLimitKey,
+        count: 1,
+        window_start: new Date().toISOString(),
+      });
+    }
+
+    return { allowed: true };
+  } catch (err) {
+    console.error("Rate limit check error:", err);
+    // Allow request on unexpected errors
+    return { allowed: true };
+  }
 }
 
 // Build dynamic system prompt with user's company benefits
@@ -147,13 +219,18 @@ serve(async (req) => {
       );
     }
 
-    // 2. Create Supabase client with user's token
+    // 2. Create Supabase clients
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     
+    // User client for authenticated queries
     const supabase = createClient(supabaseUrl, supabaseAnonKey, {
       global: { headers: { Authorization: authHeader } },
     });
+    
+    // Service client for rate limiting (bypasses RLS)
+    const serviceClient = createClient(supabaseUrl, supabaseServiceKey);
 
     // 3. Verify user by getting user data
     const { data: { user }, error: userError } = await supabase.auth.getUser();
@@ -169,7 +246,17 @@ serve(async (req) => {
     const userId = user.id;
     console.log("Authenticated user:", userId);
 
-    // 4. Parse and validate input
+    // 4. Check rate limit
+    const rateLimitResult = await checkRateLimit(serviceClient, userId);
+    if (!rateLimitResult.allowed) {
+      console.warn("Rate limit exceeded for user:", userId);
+      return new Response(
+        JSON.stringify({ error: rateLimitResult.error }),
+        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // 5. Parse and validate input
     let requestBody: unknown;
     try {
       requestBody = await req.json();
@@ -193,10 +280,10 @@ serve(async (req) => {
     const messages = validation.data!;
     console.log("Validated messages count:", messages.length);
 
-    // 5. Build dynamic system prompt with user's company benefits
+    // 6. Build dynamic system prompt with user's company benefits
     const systemPrompt = await buildSystemPrompt(supabase, userId);
 
-    // 6. Call AI gateway
+    // 7. Call AI gateway
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
       console.error("LOVABLE_API_KEY is not configured");
