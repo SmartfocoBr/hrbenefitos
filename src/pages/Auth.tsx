@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Eye, EyeOff, Mail, Lock, ArrowRight, Building2, Users, TrendingUp, Shield } from "lucide-react";
 import { z } from "zod";
 import logo from "@/assets/benefitos-logo.png";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const emailSchema = z.string().email("Email inválido");
 const passwordSchema = z.string().min(6, "Senha deve ter no mínimo 6 caracteres");
@@ -146,7 +147,12 @@ const Auth = () => {
   ];
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex relative">
+      {/* Theme Toggle - Top Right */}
+      <div className="absolute top-4 right-4 z-50">
+        <ThemeToggle />
+      </div>
+      
       {/* Left Panel - Branding */}
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden" style={{ background: 'linear-gradient(135deg, hsl(222 47% 8%) 0%, hsl(222 47% 15%) 50%, hsl(188 94% 20%) 100%)' }}>
         {/* Animated background elements */}
