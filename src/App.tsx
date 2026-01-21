@@ -10,6 +10,7 @@ import Dashboard from "./pages/Dashboard";
 import Benefits from "./pages/Benefits";
 import Integrations from "./pages/Integrations";
 import Employees from "./pages/Employees";
+import Companies from "./pages/Companies";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,7 +29,7 @@ const App = () => (
             <Route path="/benefits" element={<ProtectedRoute><Benefits /></ProtectedRoute>} />
             <Route path="/wallet" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/employees" element={<ProtectedRoute><Employees /></ProtectedRoute>} />
-            <Route path="/companies" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+            <Route path="/companies" element={<ProtectedRoute><Companies /></ProtectedRoute>} />
             <Route path="/integrations" element={<ProtectedRoute><Integrations /></ProtectedRoute>} />
             <Route path="/reports" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/audit" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
