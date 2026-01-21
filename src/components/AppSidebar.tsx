@@ -21,7 +21,7 @@ import {
   FileText,
   Bell,
 } from "lucide-react";
-import logo from "@/assets/benefitos-logo.png";
+
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -138,14 +138,13 @@ const AppSidebar = () => {
 
       {/* Logo */}
       <div className={cn("flex items-center h-16 px-4 border-b border-sidebar-border", collapsed && "justify-center")}>
-        <img 
-          src={logo} 
-          alt="BenefitOS" 
-          className={cn(
-            "brightness-0 invert transition-all duration-300 object-contain",
-            collapsed ? "h-8 w-8" : "h-8 max-w-[160px]"
-          )} 
-        />
+        {collapsed ? (
+          <span className="text-xl font-bold text-sidebar-foreground font-sans">B<span className="text-accent">.</span></span>
+        ) : (
+          <span className="text-2xl font-bold text-sidebar-foreground font-sans tracking-tight">
+            BenefitOS<span className="text-accent">.</span>
+          </span>
+        )}
       </div>
 
       {/* Navigation */}
