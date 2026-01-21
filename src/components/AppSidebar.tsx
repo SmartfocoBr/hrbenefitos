@@ -135,11 +135,14 @@ const AppSidebar = () => {
       </button>
 
       {/* Logo */}
-      <div className={cn("flex items-center h-16 px-4 border-b border-sidebar-border", collapsed && "justify-center")}>
+      <div className={cn("flex items-center h-20 px-4 border-b border-sidebar-border", collapsed && "justify-center")}>
         <img 
           src={logo} 
           alt="BenefitOS" 
-          className={cn("brightness-0 invert transition-all duration-300", collapsed ? "h-7" : "h-8")} 
+          className={cn(
+            "brightness-0 invert transition-all duration-300 object-contain",
+            collapsed ? "h-9 w-9" : "h-12 max-w-[180px]"
+          )} 
         />
       </div>
 
