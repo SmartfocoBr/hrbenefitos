@@ -180,12 +180,12 @@ const Auth = () => {
 
           {/* Main content */}
           <div className="space-y-8">
-            <div className="space-y-4">
-              <h1 className="text-5xl font-bold text-primary-foreground leading-tight">
+            <div className="space-y-6">
+              <h1 className="text-7xl font-bold text-primary-foreground leading-tight">
                 O Sistema Operacional
-                <span className="text-gradient block mt-2">do RH Moderno</span>
+                <span className="text-gradient block mt-3">do RH Moderno</span>
               </h1>
-              <p className="text-xl text-primary-foreground/70 max-w-lg leading-relaxed">
+              <p className="text-3xl text-primary-foreground/70 max-w-lg leading-relaxed">
                 Centralize todos os benefícios corporativos em uma única plataforma inteligente. 
                 Automatize, analise e otimize a gestão de pessoas.
               </p>
@@ -199,9 +199,9 @@ const Auth = () => {
                   className="glass-dark rounded-xl p-4 backdrop-blur-xl animate-fade-in-up"
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
-                  <stat.icon className="h-5 w-5 text-accent mb-2" />
-                  <div className="text-2xl font-bold text-primary-foreground">{stat.value}</div>
-                  <div className="text-sm text-primary-foreground/60">{stat.label}</div>
+                  <stat.icon className="h-7 w-7 text-accent mb-3" />
+                  <div className="text-4xl font-bold text-primary-foreground">{stat.value}</div>
+                  <div className="text-lg text-primary-foreground/60">{stat.label}</div>
                 </div>
               ))}
             </div>
@@ -226,11 +226,11 @@ const Auth = () => {
             />
           </div>
 
-          <div className="text-center space-y-2">
-            <h2 className="text-3xl font-bold text-foreground">
+          <div className="text-center space-y-3">
+            <h2 className="text-5xl font-bold text-foreground">
               {isLogin ? "Bem-vindo de volta" : "Criar sua conta"}
             </h2>
-            <p className="text-muted-foreground">
+            <p className="text-xl text-muted-foreground">
               {isLogin 
                 ? "Acesse sua plataforma de benefícios" 
                 : "Comece a transformar sua gestão de benefícios"}
