@@ -11,6 +11,7 @@ import Benefits from "./pages/Benefits";
 import Integrations from "./pages/Integrations";
 import Employees from "./pages/Employees";
 import Companies from "./pages/Companies";
+import Wallet from "./pages/Wallet";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -27,7 +28,7 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/benefits" element={<ProtectedRoute><Benefits /></ProtectedRoute>} />
-            <Route path="/wallet" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+            <Route path="/wallet" element={<ProtectedRoute><Wallet /></ProtectedRoute>} />
             <Route path="/employees" element={<ProtectedRoute><Employees /></ProtectedRoute>} />
             <Route path="/companies" element={<ProtectedRoute><Companies /></ProtectedRoute>} />
             <Route path="/integrations" element={<ProtectedRoute><Integrations /></ProtectedRoute>} />
