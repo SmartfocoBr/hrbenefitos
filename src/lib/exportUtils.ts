@@ -1,6 +1,5 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import * as XLSX from "xlsx";
 import { BenefitReport, CompanyReport, MonthlyExpense, ReportSummary } from "@/types/report";
 import { formatCurrency } from "./reportsData";
 
@@ -156,66 +155,107 @@ export const exportToPDF = (
   doc.save(`relatorio-beneficios-${new Date().toISOString().split("T")[0]}.pdf`);
 };
 
+// CSV utility functions - secure alternative to xlsx
+function escapeCSVValue(value: unknown): string {
+  if (value === null || value === undefined) return "";
+  const str = String(value);
+  // Escape quotes and wrap in quotes if contains special characters
+  if (str.includes(",") || str.includes('"') || str.includes("\n") || str.includes("\r")) {
+    return `"${str.replace(/"/g, '""')}"`;
+  }
+  return str;
+}
+
+function arrayToCSV(headers: string[], rows: (string | number)[][]): string {
+  const headerLine = headers.map(escapeCSVValue).join(",");
+  const dataLines = rows.map(row => row.map(escapeCSVValue).join(","));
+  return [headerLine, ...dataLines].join("\n");
+}
+
+function downloadCSV(content: string, filename: string) {
+  // Add BOM for Excel UTF-8 compatibility
+  const bom = "\uFEFF";
+  const blob = new Blob([bom + content], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
+
 export const exportToExcel = (
   summary: ReportSummary,
   benefits: BenefitReport[],
   companies: CompanyReport[],
   expenses: MonthlyExpense[]
 ) => {
-  const workbook = XLSX.utils.book_new();
+  const dateStr = new Date().toISOString().split("T")[0];
   
-  // Summary sheet
-  const summarySheet = XLSX.utils.aoa_to_sheet([
-    ["Relatório de Benefícios - Resumo Executivo"],
-    [""],
-    ["Indicador", "Valor"],
+  // Summary CSV
+  const summaryHeaders = ["Indicador", "Valor"];
+  const summaryRows: (string | number)[][] = [
     ["Orçamento Total", summary.totalBudget],
     ["Total Gasto", summary.totalSpent],
     ["Total de Colaboradores", summary.totalEmployees],
     ["Custo Médio por Colaborador", summary.averagePerEmployee],
     ["Taxa de Utilização (%)", summary.utilizationRate],
     ["Taxa de Conformidade (%)", summary.complianceRate],
+  ];
+  
+  // Benefits CSV
+  const benefitsHeaders = ["Benefício", "Categoria", "Inscritos", "Elegíveis", "Taxa de Adesão (%)", "Custo Mensal", "Tendência", "Variação (%)"];
+  const benefitsRows = benefits.map(b => [
+    b.name,
+    b.category,
+    b.enrolled,
+    b.eligible,
+    b.adhesionRate,
+    b.monthlyCost,
+    b.trend === "up" ? "Alta" : b.trend === "down" ? "Baixa" : "Estável",
+    b.trendValue,
   ]);
-  XLSX.utils.book_append_sheet(workbook, summarySheet, "Resumo");
   
-  // Benefits sheet
-  const benefitsData = benefits.map(b => ({
-    "Benefício": b.name,
-    "Categoria": b.category,
-    "Inscritos": b.enrolled,
-    "Elegíveis": b.eligible,
-    "Taxa de Adesão (%)": b.adhesionRate,
-    "Custo Mensal": b.monthlyCost,
-    "Tendência": b.trend === "up" ? "Alta" : b.trend === "down" ? "Baixa" : "Estável",
-    "Variação (%)": b.trendValue,
-  }));
-  const benefitsSheet = XLSX.utils.json_to_sheet(benefitsData);
-  XLSX.utils.book_append_sheet(workbook, benefitsSheet, "Benefícios");
+  // Companies CSV
+  const companiesHeaders = ["Empresa", "Colaboradores", "Orçamento", "Gasto", "Utilização (%)", "Top Benefícios"];
+  const companiesRows = companies.map(c => [
+    c.name,
+    c.employees,
+    c.budget,
+    c.spent,
+    c.utilization,
+    c.topBenefits.join("; "),
+  ]);
   
-  // Companies sheet
-  const companiesData = companies.map(c => ({
-    "Empresa": c.name,
-    "Colaboradores": c.employees,
-    "Orçamento": c.budget,
-    "Gasto": c.spent,
-    "Utilização (%)": c.utilization,
-    "Top Benefícios": c.topBenefits.join(", "),
-  }));
-  const companiesSheet = XLSX.utils.json_to_sheet(companiesData);
-  XLSX.utils.book_append_sheet(workbook, companiesSheet, "Empresas");
+  // Expenses CSV
+  const expensesHeaders = ["Mês", "Alimentação", "Saúde", "Transporte", "Bem-estar", "Outros", "Total"];
+  const expensesRows = expenses.map(e => [
+    e.month,
+    e.alimentacao,
+    e.saude,
+    e.transporte,
+    e.bemestar,
+    e.outros,
+    e.total,
+  ]);
   
-  // Monthly expenses sheet
-  const expensesData = expenses.map(e => ({
-    "Mês": e.month,
-    "Alimentação": e.alimentacao,
-    "Saúde": e.saude,
-    "Transporte": e.transporte,
-    "Bem-estar": e.bemestar,
-    "Outros": e.outros,
-    "Total": e.total,
-  }));
-  const expensesSheet = XLSX.utils.json_to_sheet(expensesData);
-  XLSX.utils.book_append_sheet(workbook, expensesSheet, "Gastos Mensais");
+  // Combine all into a single CSV with sections
+  const sections = [
+    "=== RESUMO EXECUTIVO ===",
+    arrayToCSV(summaryHeaders, summaryRows),
+    "",
+    "=== BENEFÍCIOS ===",
+    arrayToCSV(benefitsHeaders, benefitsRows),
+    "",
+    "=== EMPRESAS ===",
+    arrayToCSV(companiesHeaders, companiesRows),
+    "",
+    "=== GASTOS MENSAIS ===",
+    arrayToCSV(expensesHeaders, expensesRows),
+  ];
   
-  XLSX.writeFile(workbook, `relatorio-beneficios-${new Date().toISOString().split("T")[0]}.xlsx`);
+  const fullContent = sections.join("\n");
+  downloadCSV(fullContent, `relatorio-beneficios-${dateStr}.csv`);
 };
