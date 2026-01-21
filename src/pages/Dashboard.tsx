@@ -3,8 +3,8 @@ import { useRealtimeDashboard } from "@/hooks/useRealtimeDashboard";
 import { RealtimeIndicator } from "@/components/dashboard/RealtimeIndicator";
 import { RealtimeMetricsGrid } from "@/components/dashboard/RealtimeMetricsGrid";
 import { RealtimeActivityFeed } from "@/components/dashboard/RealtimeActivityFeed";
-import BenefitsBarChart from "@/components/dashboard/BenefitsBarChart";
-import BenefitsPieChart from "@/components/dashboard/BenefitsPieChart";
+import AnimatedRealtimeBenefitsChart from "@/components/dashboard/AnimatedRealtimeBenefitsChart";
+import AnimatedRealtimePieChart from "@/components/dashboard/AnimatedRealtimePieChart";
 import { Button } from "@/components/ui/button";
 import { RefreshCw, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -51,10 +51,10 @@ const Dashboard = () => {
           <RealtimeMetricsGrid metrics={metrics} isLoading={isLoading} />
         </div>
 
-        {/* Charts Row */}
+        {/* Animated Charts Row */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-fade-in-up animation-delay-200">
-          <BenefitsBarChart />
-          <BenefitsPieChart />
+          <AnimatedRealtimeBenefitsChart />
+          <AnimatedRealtimePieChart />
         </div>
 
         {/* Activity Feed */}
