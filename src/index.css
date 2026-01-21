@@ -182,7 +182,7 @@
   }
 
   .glass-dark {
-    @apply bg-sidebar-background/90 backdrop-blur-xl border border-sidebar-border/50;
+    @apply bg-sidebar/90 backdrop-blur-xl border border-sidebar-border/50;
   }
 
   /* Gradient text */
