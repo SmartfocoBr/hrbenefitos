@@ -148,7 +148,6 @@ export function useRealtimeDashboard() {
         "postgres_changes",
         { event: "*", schema: "public", table: "companies" },
         (payload) => {
-          console.log("Companies change:", payload);
           fetchMetrics();
           addActivity({
             type: "company",
@@ -172,7 +171,6 @@ export function useRealtimeDashboard() {
         "postgres_changes",
         { event: "*", schema: "public", table: "employees" },
         (payload) => {
-          console.log("Employees change:", payload);
           fetchMetrics();
           addActivity({
             type: "employee",
@@ -192,7 +190,6 @@ export function useRealtimeDashboard() {
         "postgres_changes",
         { event: "*", schema: "public", table: "employee_wallets" },
         (payload) => {
-          console.log("Wallets change:", payload);
           fetchMetrics();
           addActivity({
             type: "wallet",
@@ -212,7 +209,6 @@ export function useRealtimeDashboard() {
         "postgres_changes",
         { event: "*", schema: "public", table: "wallet_transactions" },
         (payload) => {
-          console.log("Transactions change:", payload);
           fetchMetrics();
           addActivity({
             type: "transaction",
