@@ -1,44 +1,66 @@
 import DashboardLayout from "@/components/DashboardLayout";
-import StatsCard from "@/components/dashboard/StatsCard";
+import { useRealtimeDashboard } from "@/hooks/useRealtimeDashboard";
+import { RealtimeIndicator } from "@/components/dashboard/RealtimeIndicator";
+import { RealtimeMetricsGrid } from "@/components/dashboard/RealtimeMetricsGrid";
+import { RealtimeActivityFeed } from "@/components/dashboard/RealtimeActivityFeed";
 import BenefitsBarChart from "@/components/dashboard/BenefitsBarChart";
 import BenefitsPieChart from "@/components/dashboard/BenefitsPieChart";
-import ActivityFeed from "@/components/dashboard/ActivityFeed";
-import { DollarSign, Gift, Users, Building2, TrendingUp, TrendingDown, Target, Clock } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { RefreshCw, AlertCircle } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const Dashboard = () => {
+  const { metrics, activities, isLoading, error, isConnected, refetch } = useRealtimeDashboard();
+
   return (
     <DashboardLayout>
       <div className="p-8 space-y-8">
         {/* Header */}
-        <div className="animate-fade-in">
-          <h1 className="text-3xl font-bold text-foreground">Dashboard Executivo</h1>
-          <p className="text-muted-foreground mt-1">Visão geral da gestão de benefícios corporativos</p>
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 animate-fade-in">
+          <div>
+            <h1 className="text-3xl font-bold text-foreground">Dashboard Executivo</h1>
+            <p className="text-muted-foreground mt-1">
+              Visão geral da gestão de benefícios corporativos em tempo real
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <RealtimeIndicator isConnected={isConnected} />
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={refetch}
+              disabled={isLoading}
+              className="gap-2"
+            >
+              <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+              Atualizar
+            </Button>
+          </div>
         </div>
 
-        {/* KPI Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="animate-fade-in-up"><StatsCard title="Gasto Total Mensal" value="R$2.76M" change="-3.2%" changeType="positive" icon={DollarSign} description="vs. mês anterior" /></div>
-          <div className="animate-fade-in-up animation-delay-100"><StatsCard title="Benefícios Ativos" value="18" change="+2" changeType="positive" icon={Gift} description="novas categorias" /></div>
-          <div className="animate-fade-in-up animation-delay-200"><StatsCard title="Colaboradores" value="4.832" change="+127" changeType="positive" icon={Users} description="este mês" /></div>
-          <div className="animate-fade-in-up animation-delay-300"><StatsCard title="Empresas" value="12" change="+1" changeType="positive" icon={Building2} description="nova integração" /></div>
+        {/* Error Alert */}
+        {error && (
+          <Alert variant="destructive" className="animate-fade-in">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
+
+        {/* Realtime Metrics Grid */}
+        <div className="animate-fade-in-up">
+          <RealtimeMetricsGrid metrics={metrics} isLoading={isLoading} />
         </div>
 
-        {/* Second Row KPIs */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="animate-fade-in-up animation-delay-100"><StatsCard title="Custo por Colaborador" value="R$571" change="-4.1%" changeType="positive" icon={TrendingDown} description="otimizado" /></div>
-          <div className="animate-fade-in-up animation-delay-200"><StatsCard title="Taxa de Adesão" value="94.7%" change="+2.3%" changeType="positive" icon={Target} description="média geral" /></div>
-          <div className="animate-fade-in-up animation-delay-300"><StatsCard title="Engajamento" value="87%" change="+5%" changeType="positive" icon={TrendingUp} description="colaboradores ativos" /></div>
-          <div className="animate-fade-in-up animation-delay-400"><StatsCard title="SLA Integrações" value="99.8%" change="0%" changeType="neutral" icon={Clock} description="uptime mensal" /></div>
-        </div>
-
-        {/* Charts */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="animate-fade-in-up animation-delay-200"><BenefitsBarChart /></div>
-          <div className="animate-fade-in-up animation-delay-300"><BenefitsPieChart /></div>
+        {/* Charts Row */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-fade-in-up animation-delay-200">
+          <BenefitsBarChart />
+          <BenefitsPieChart />
         </div>
 
         {/* Activity Feed */}
-        <div className="animate-fade-in-up animation-delay-400"><ActivityFeed /></div>
+        <div className="animate-fade-in-up animation-delay-300">
+          <RealtimeActivityFeed activities={activities} />
+        </div>
       </div>
     </DashboardLayout>
   );
