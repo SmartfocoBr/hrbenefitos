@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useEmployees, Employee } from "@/hooks/useEmployees";
 import { RealtimeIndicator } from "@/components/dashboard/RealtimeIndicator";
+import { EmployeeFormDialog } from "@/components/employees/EmployeeFormDialog";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 import { 
   Search, 
   Plus, 
@@ -49,11 +52,22 @@ const contractConfig: Record<string, { label: string; color: string }> = {
 };
 
 const Employees = () => {
-  const { employees, stats, isLoading, error } = useEmployees();
+  const { employees, stats, isLoading, error, refetch } = useEmployees();
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [contractFilter, setContractFilter] = useState<ContractFilter>("all");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [formDialogOpen, setFormDialogOpen] = useState(false);
+  const [companies, setCompanies] = useState<{ id: string; name: string }[]>([]);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    async function fetchCompanies() {
+      const { data } = await supabase.from("companies").select("id, name").order("name");
+      if (data) setCompanies(data);
+    }
+    fetchCompanies();
+  }, []);
 
   const filteredEmployees = useMemo(() => {
     return employees.filter((employee) => {
@@ -156,7 +170,7 @@ const Employees = () => {
               <Download className="h-4 w-4" />
               Exportar
             </Button>
-            <Button className="btn-premium gap-2">
+            <Button className="btn-premium gap-2" onClick={() => setFormDialogOpen(true)}>
               <Plus className="h-4 w-4" />
               Novo Colaborador
             </Button>
@@ -336,6 +350,17 @@ const Employees = () => {
             </p>
           </div>
         )}
+
+        {/* Employee Form Dialog */}
+        <EmployeeFormDialog
+          open={formDialogOpen}
+          onClose={() => setFormDialogOpen(false)}
+          onSuccess={() => {
+            toast({ title: "Colaborador cadastrado!" });
+            refetch();
+          }}
+          companies={companies}
+        />
       </div>
     </DashboardLayout>
   );

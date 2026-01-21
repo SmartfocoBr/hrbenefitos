@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import CompanyCard from "@/components/companies/CompanyCard";
 import CompanyDetailDialog from "@/components/companies/CompanyDetailDialog";
+import { CompanyFormDialog } from "@/components/companies/CompanyFormDialog";
 import { Company } from "@/types/company";
 import { companiesData, statusConfig, segmentConfig } from "@/lib/companiesData";
 import { Input } from "@/components/ui/input";
@@ -18,6 +19,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import StatsCard from "@/components/dashboard/StatsCard";
+import { useToast } from "@/hooks/use-toast";
 
 type StatusFilter = "all" | keyof typeof statusConfig;
 
@@ -27,6 +29,8 @@ const Companies = () => {
   const [segmentFilter, setSegmentFilter] = useState<string>("all");
   const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [formDialogOpen, setFormDialogOpen] = useState(false);
+  const { toast } = useToast();
 
   const filteredCompanies = useMemo(() => {
     return companiesData.filter((company) => {
@@ -83,7 +87,7 @@ const Companies = () => {
               <Download className="h-4 w-4" />
               Exportar
             </Button>
-            <Button className="btn-premium gap-2">
+            <Button className="btn-premium gap-2" onClick={() => setFormDialogOpen(true)}>
               <Plus className="h-4 w-4" />
               Nova Empresa
             </Button>
@@ -219,6 +223,13 @@ const Companies = () => {
           company={selectedCompany}
           open={dialogOpen}
           onClose={() => setDialogOpen(false)}
+        />
+
+        {/* Company Form Dialog */}
+        <CompanyFormDialog
+          open={formDialogOpen}
+          onClose={() => setFormDialogOpen(false)}
+          onSuccess={() => toast({ title: "Recarregue para ver a nova empresa" })}
         />
       </div>
     </DashboardLayout>
