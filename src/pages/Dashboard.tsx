@@ -18,8 +18,8 @@ const Dashboard = () => {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 animate-fade-in">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Dashboard Executivo</h1>
-            <p className="text-muted-foreground mt-1">
+            <h1 className="text-5xl font-bold text-foreground">Dashboard Executivo</h1>
+            <p className="text-xl text-muted-foreground mt-2">
               Visão geral da gestão de benefícios corporativos em tempo real
             </p>
           </div>
