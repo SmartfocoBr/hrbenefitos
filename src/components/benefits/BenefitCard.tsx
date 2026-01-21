@@ -1,4 +1,5 @@
 import { LucideIcon } from "lucide-react";
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -47,15 +48,32 @@ const BenefitCard = ({ benefit, onManage }: BenefitCardProps) => {
     : 0;
 
   return (
-    <div className="stats-card group cursor-pointer" onClick={() => onManage(benefit)}>
+    <motion.div 
+      className="stats-card group cursor-pointer" 
+      onClick={() => onManage(benefit)}
+      whileHover={{ 
+        scale: 1.02, 
+        y: -6,
+        transition: { type: "spring", stiffness: 400, damping: 25 }
+      }}
+      whileTap={{ 
+        scale: 0.98,
+        transition: { type: "spring", stiffness: 400, damping: 25 }
+      }}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ type: "spring", stiffness: 300, damping: 24 }}
+    >
       {/* Header */}
       <div className="flex items-start justify-between mb-4">
-        <div 
-          className="p-3 rounded-xl transition-transform group-hover:scale-110"
+        <motion.div 
+          className="p-3 rounded-xl"
           style={{ backgroundColor: `${benefit.color}15` }}
+          whileHover={{ scale: 1.15, rotate: 8 }}
+          transition={{ type: "spring", stiffness: 300, damping: 20 }}
         >
           <Icon className="h-6 w-6" style={{ color: benefit.color }} />
-        </div>
+        </motion.div>
         <Badge variant="outline" className={cn("text-xs", status.className)}>
           {status.label}
         </Badge>
@@ -77,42 +95,59 @@ const BenefitCard = ({ benefit, onManage }: BenefitCardProps) => {
 
       {/* Stats */}
       <div className="mt-4 pt-4 border-t border-border grid grid-cols-3 gap-2">
-        <div className="text-center">
+        <motion.div 
+          className="text-center"
+          whileHover={{ scale: 1.05 }}
+          transition={{ type: "spring", stiffness: 400, damping: 25 }}
+        >
           <div className="flex items-center justify-center gap-1 text-muted-foreground mb-1">
             <Users className="h-3 w-3" />
           </div>
           <p className="text-lg font-bold text-foreground">{benefit.enrolledCount.toLocaleString()}</p>
           <p className="text-xs text-muted-foreground">Inscritos</p>
-        </div>
-        <div className="text-center">
+        </motion.div>
+        <motion.div 
+          className="text-center"
+          whileHover={{ scale: 1.05 }}
+          transition={{ type: "spring", stiffness: 400, damping: 25 }}
+        >
           <div className="flex items-center justify-center gap-1 text-muted-foreground mb-1">
             <TrendingUp className="h-3 w-3" />
           </div>
           <p className="text-lg font-bold text-foreground">{adhesionRate}%</p>
           <p className="text-xs text-muted-foreground">Adesão</p>
-        </div>
-        <div className="text-center">
+        </motion.div>
+        <motion.div 
+          className="text-center"
+          whileHover={{ scale: 1.05 }}
+          transition={{ type: "spring", stiffness: 400, damping: 25 }}
+        >
           <p className="text-lg font-bold text-foreground">
             R${(benefit.monthlyCost / 1000).toFixed(0)}K
           </p>
           <p className="text-xs text-muted-foreground">Custo/mês</p>
-        </div>
+        </motion.div>
       </div>
 
       {/* Action */}
-      <Button 
-        variant="ghost" 
-        size="sm" 
-        className="w-full mt-4 text-accent hover:text-accent hover:bg-accent/10"
-        onClick={(e) => {
-          e.stopPropagation();
-          onManage(benefit);
-        }}
+      <motion.div
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
       >
-        <Settings className="h-4 w-4 mr-2" />
-        Gerenciar
-      </Button>
-    </div>
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          className="w-full mt-4 text-accent hover:text-accent hover:bg-accent/10"
+          onClick={(e) => {
+            e.stopPropagation();
+            onManage(benefit);
+          }}
+        >
+          <Settings className="h-4 w-4 mr-2" />
+          Gerenciar
+        </Button>
+      </motion.div>
+    </motion.div>
   );
 };
 

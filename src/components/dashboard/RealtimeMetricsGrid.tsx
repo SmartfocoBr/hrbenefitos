@@ -1,6 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { DashboardMetrics } from "@/hooks/useRealtimeDashboard";
+import { motion } from "framer-motion";
 import { 
   Building2, 
   Users, 
@@ -28,6 +29,32 @@ const formatCurrency = (value: number): string => {
     return `R$${(value / 1000).toFixed(1)}K`;
   }
   return `R$${value.toFixed(0)}`;
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: {
+      delay: i * 0.05,
+      type: "spring" as const,
+      stiffness: 300,
+      damping: 24,
+    },
+  }),
+};
+
+const hoverVariants = {
+  hover: { 
+    scale: 1.03, 
+    y: -4,
+    transition: { type: "spring" as const, stiffness: 400, damping: 25 }
+  },
+  tap: { 
+    scale: 0.98,
+    transition: { type: "spring" as const, stiffness: 400, damping: 25 }
+  }
 };
 
 export function RealtimeMetricsGrid({ metrics, isLoading }: RealtimeMetricsGridProps) {
@@ -105,39 +132,53 @@ export function RealtimeMetricsGrid({ metrics, isLoading }: RealtimeMetricsGridP
           const percentage = card.total ? (card.value / card.total) * 100 : 0;
           
           return (
-            <Card
+            <motion.div
               key={card.title}
-              className={cn(
-                "p-4 card-elevated transition-all duration-300 hover:shadow-lg",
-                isLoading && "animate-pulse"
-              )}
-              style={{ animationDelay: `${index * 50}ms` }}
+              custom={index}
+              initial="hidden"
+              animate="visible"
+              variants={cardVariants}
+              whileHover="hover"
+              whileTap="tap"
             >
-              <div className="flex items-center justify-between mb-3">
-                <div className={cn("p-2 rounded-lg", card.bgColor)}>
-                  <Icon className={cn("h-5 w-5", card.color)} />
-                </div>
-                {card.total && (
-                  <span className="text-xs text-muted-foreground">
-                    {percentage.toFixed(0)}%
-                  </span>
-                )}
-              </div>
-              <div className="space-y-1">
-                <p className="text-2xl font-bold text-foreground">
-                  {isLoading ? "..." : card.value}
-                  {card.total && (
-                    <span className="text-sm font-normal text-muted-foreground ml-1">
-                      / {card.total}
-                    </span>
+              <motion.div variants={hoverVariants}>
+                <Card
+                  className={cn(
+                    "p-4 card-elevated transition-shadow duration-300 hover:shadow-lg hover:shadow-accent/10 cursor-pointer",
+                    isLoading && "animate-pulse"
                   )}
-                </p>
-                <p className="text-sm text-muted-foreground">{card.title}</p>
-                {card.total && (
-                  <Progress value={percentage} className="h-1.5 mt-2" />
-                )}
-              </div>
-            </Card>
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <motion.div 
+                      className={cn("p-2 rounded-lg", card.bgColor)}
+                      whileHover={{ rotate: 12, scale: 1.1 }}
+                      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                    >
+                      <Icon className={cn("h-5 w-5", card.color)} />
+                    </motion.div>
+                    {card.total && (
+                      <span className="text-xs text-muted-foreground">
+                        {percentage.toFixed(0)}%
+                      </span>
+                    )}
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-2xl font-bold text-foreground">
+                      {isLoading ? "..." : card.value}
+                      {card.total && (
+                        <span className="text-sm font-normal text-muted-foreground ml-1">
+                          / {card.total}
+                        </span>
+                      )}
+                    </p>
+                    <p className="text-sm text-muted-foreground">{card.title}</p>
+                    {card.total && (
+                      <Progress value={percentage} className="h-1.5 mt-2" />
+                    )}
+                  </div>
+                </Card>
+              </motion.div>
+            </motion.div>
           );
         })}
       </div>
@@ -148,59 +189,88 @@ export function RealtimeMetricsGrid({ metrics, isLoading }: RealtimeMetricsGridP
           const Icon = card.icon;
           
           return (
-            <Card
+            <motion.div
               key={card.title}
-              className={cn(
-                "p-4 card-elevated transition-all duration-300 hover:shadow-lg",
-                isLoading && "animate-pulse"
-              )}
-              style={{ animationDelay: `${(index + 4) * 50}ms` }}
+              custom={index + 4}
+              initial="hidden"
+              animate="visible"
+              variants={cardVariants}
+              whileHover="hover"
+              whileTap="tap"
             >
-              <div className="flex items-center gap-3">
-                <div className={cn("p-2 rounded-lg", card.bgColor)}>
-                  <Icon className={cn("h-5 w-5", card.color)} />
-                </div>
-                <div>
-                  <p className="text-lg font-bold text-foreground">
-                    {isLoading ? "..." : card.value}
-                  </p>
-                  <p className="text-xs text-muted-foreground">{card.title}</p>
-                </div>
-              </div>
-            </Card>
+              <motion.div variants={hoverVariants}>
+                <Card
+                  className={cn(
+                    "p-4 card-elevated transition-shadow duration-300 hover:shadow-lg hover:shadow-accent/10 cursor-pointer",
+                    isLoading && "animate-pulse"
+                  )}
+                >
+                  <div className="flex items-center gap-3">
+                    <motion.div 
+                      className={cn("p-2 rounded-lg", card.bgColor)}
+                      whileHover={{ rotate: 12, scale: 1.1 }}
+                      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                    >
+                      <Icon className={cn("h-5 w-5", card.color)} />
+                    </motion.div>
+                    <div>
+                      <p className="text-lg font-bold text-foreground">
+                        {isLoading ? "..." : card.value}
+                      </p>
+                      <p className="text-xs text-muted-foreground">{card.title}</p>
+                    </div>
+                  </div>
+                </Card>
+              </motion.div>
+            </motion.div>
           );
         })}
       </div>
 
       {/* Utilization Rate */}
-      <Card className="p-6 card-elevated">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-primary/10">
-              <Target className="h-5 w-5 text-primary" />
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4, type: "spring", stiffness: 300, damping: 24 }}
+      >
+        <Card className="p-6 card-elevated">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <motion.div 
+                className="p-2 rounded-lg bg-primary/10"
+                whileHover={{ rotate: 12, scale: 1.1 }}
+                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+              >
+                <Target className="h-5 w-5 text-primary" />
+              </motion.div>
+              <div>
+                <h3 className="font-semibold text-foreground">Taxa de Utilização do Orçamento</h3>
+                <p className="text-sm text-muted-foreground">Percentual do orçamento mensal utilizado</p>
+              </div>
             </div>
-            <div>
-              <h3 className="font-semibold text-foreground">Taxa de Utilização do Orçamento</h3>
-              <p className="text-sm text-muted-foreground">Percentual do orçamento mensal utilizado</p>
+            <div className="flex items-center gap-2">
+              <Activity className="h-4 w-4 text-muted-foreground" />
+              <motion.span 
+                className="text-2xl font-bold text-foreground"
+                initial={{ scale: 0.8 }}
+                animate={{ scale: 1 }}
+                transition={{ type: "spring", stiffness: 400, damping: 15 }}
+              >
+                {isLoading ? "..." : `${metrics.utilizationRate.toFixed(1)}%`}
+              </motion.span>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <Activity className="h-4 w-4 text-muted-foreground" />
-            <span className="text-2xl font-bold text-foreground">
-              {isLoading ? "..." : `${metrics.utilizationRate.toFixed(1)}%`}
-            </span>
+          <Progress 
+            value={Math.min(metrics.utilizationRate, 100)} 
+            className="h-3"
+          />
+          <div className="flex justify-between mt-2 text-xs text-muted-foreground">
+            <span>0%</span>
+            <span>50%</span>
+            <span>100%</span>
           </div>
-        </div>
-        <Progress 
-          value={Math.min(metrics.utilizationRate, 100)} 
-          className="h-3"
-        />
-        <div className="flex justify-between mt-2 text-xs text-muted-foreground">
-          <span>0%</span>
-          <span>50%</span>
-          <span>100%</span>
-        </div>
-      </Card>
+        </Card>
+      </motion.div>
     </div>
   );
 }
