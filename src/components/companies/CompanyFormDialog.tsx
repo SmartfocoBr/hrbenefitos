@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { maskCNPJ, maskPhone, unmask } from "@/lib/masks";
+import { maskCNPJ, maskPhone, unmask, validateCNPJ } from "@/lib/masks";
 import {
   Dialog,
   DialogContent,
@@ -32,7 +32,9 @@ import { Building2, Loader2 } from "lucide-react";
 
 const companySchema = z.object({
   name: z.string().min(2, "Nome deve ter no mínimo 2 caracteres").max(100),
-  cnpj: z.string().min(14, "CNPJ deve ter 14 dígitos").max(18),
+  cnpj: z.string()
+    .min(18, "CNPJ incompleto")
+    .refine((val) => validateCNPJ(val), { message: "CNPJ inválido" }),
   segment: z.string().min(1, "Selecione um segmento"),
   email: z.string().email("Email inválido").optional().or(z.literal("")),
   phone: z.string().optional(),
