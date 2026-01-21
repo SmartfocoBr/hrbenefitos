@@ -23,6 +23,7 @@ import {
 import logo from "@/assets/benefitos-logo.png";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 interface NavItem {
   icon: React.ElementType;
@@ -152,41 +153,50 @@ const AppSidebar = () => {
       {/* User section */}
       <div className="p-3 border-t border-sidebar-border">
         {!collapsed ? (
-          <div className="flex items-center gap-3 px-3 py-2">
-            <div className="w-8 h-8 rounded-full bg-sidebar-primary flex items-center justify-center text-sidebar-primary-foreground font-medium text-sm">
-              {user?.email?.charAt(0).toUpperCase() || "U"}
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-sidebar-foreground truncate">
-                {user?.email?.split("@")[0] || "Usuário"}
-              </p>
-              <p className="text-xs text-sidebar-foreground/60 truncate">
-                Admin
-              </p>
-            </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={signOut}
-              className="h-8 w-8 text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent"
-            >
-              <LogOut className="h-4 w-4" />
-            </Button>
-          </div>
-        ) : (
-          <Tooltip delayDuration={0}>
-            <TooltipTrigger asChild>
+          <div className="space-y-2">
+            <div className="flex items-center gap-3 px-3 py-2">
+              <div className="w-8 h-8 rounded-full bg-sidebar-primary flex items-center justify-center text-sidebar-primary-foreground font-medium text-sm">
+                {user?.email?.charAt(0).toUpperCase() || "U"}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-sidebar-foreground truncate">
+                  {user?.email?.split("@")[0] || "Usuário"}
+                </p>
+                <p className="text-xs text-sidebar-foreground/60 truncate">
+                  Admin
+                </p>
+              </div>
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={signOut}
-                className="w-full h-10 text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent"
+                className="h-8 w-8 text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent"
               >
-                <LogOut className="h-5 w-5" />
+                <LogOut className="h-4 w-4" />
               </Button>
-            </TooltipTrigger>
-            <TooltipContent side="right">Sair</TooltipContent>
-          </Tooltip>
+            </div>
+            <div className="flex items-center justify-between px-3">
+              <span className="text-xs text-sidebar-foreground/40">Tema</span>
+              <ThemeToggle variant="minimal" />
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            <ThemeToggle variant="sidebar" />
+            <Tooltip delayDuration={0}>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={signOut}
+                  className="w-full h-9 text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent"
+                >
+                  <LogOut className="h-5 w-5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="right">Sair</TooltipContent>
+            </Tooltip>
+          </div>
         )}
       </div>
     </aside>
