@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { maskCNPJ, maskPhone, unmask } from "@/lib/masks";
 import {
   Dialog,
   DialogContent,
@@ -158,7 +159,11 @@ export function CompanyFormDialog({ open, onClose, onSuccess }: CompanyFormDialo
                   <FormItem>
                     <FormLabel>CNPJ *</FormLabel>
                     <FormControl>
-                      <Input placeholder="00.000.000/0000-00" {...field} />
+                      <Input 
+                        placeholder="00.000.000/0000-00" 
+                        value={field.value}
+                        onChange={(e) => field.onChange(maskCNPJ(e.target.value))}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -211,7 +216,11 @@ export function CompanyFormDialog({ open, onClose, onSuccess }: CompanyFormDialo
                   <FormItem>
                     <FormLabel>Telefone</FormLabel>
                     <FormControl>
-                      <Input placeholder="(00) 00000-0000" {...field} />
+                      <Input 
+                        placeholder="(00) 00000-0000" 
+                        value={field.value}
+                        onChange={(e) => field.onChange(maskPhone(e.target.value))}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
