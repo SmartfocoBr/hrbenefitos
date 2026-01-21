@@ -7,6 +7,7 @@ import { AuthProvider } from "@/hooks/useAuth";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
+import Benefits from "./pages/Benefits";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -22,7 +23,7 @@ const App = () => (
             <Route path="/" element={<Navigate to="/auth" replace />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-            <Route path="/benefits" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+            <Route path="/benefits" element={<ProtectedRoute><Benefits /></ProtectedRoute>} />
             <Route path="/wallet" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/employees" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/companies" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
