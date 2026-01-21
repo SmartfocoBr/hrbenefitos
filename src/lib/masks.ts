@@ -1,5 +1,58 @@
 // Input mask utilities for Brazilian formats
 
+// CEP mask: 00000-000
+export function maskCEP(value: string): string {
+  return value
+    .replace(/\D/g, "")
+    .slice(0, 8)
+    .replace(/(\d{5})(\d)/, "$1-$2");
+}
+
+// Validate CEP format
+export function validateCEP(value: string): boolean {
+  const cep = value.replace(/\D/g, "");
+  return cep.length === 8;
+}
+
+// ViaCEP API response type
+export interface ViaCEPResponse {
+  cep: string;
+  logradouro: string;
+  complemento: string;
+  bairro: string;
+  localidade: string;
+  uf: string;
+  erro?: boolean;
+}
+
+// Fetch address from CEP using ViaCEP API
+export async function fetchAddressByCEP(cep: string): Promise<ViaCEPResponse | null> {
+  const cleanCEP = cep.replace(/\D/g, "");
+  
+  if (cleanCEP.length !== 8) {
+    return null;
+  }
+
+  try {
+    const response = await fetch(`https://viacep.com.br/ws/${cleanCEP}/json/`);
+    
+    if (!response.ok) {
+      return null;
+    }
+    
+    const data: ViaCEPResponse = await response.json();
+    
+    if (data.erro) {
+      return null;
+    }
+    
+    return data;
+  } catch (error) {
+    console.error("Error fetching CEP:", error);
+    return null;
+  }
+}
+
 export function maskCPF(value: string): string {
   return value
     .replace(/\D/g, "")

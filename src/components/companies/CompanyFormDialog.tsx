@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { maskCNPJ, maskPhone, unmask, validateCNPJ } from "@/lib/masks";
+import { maskCNPJ, maskPhone, maskCEP, fetchAddressByCEP, validateCNPJ } from "@/lib/masks";
 import {
   Dialog,
   DialogContent,
@@ -18,6 +18,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormDescription,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -28,7 +29,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Building2, Loader2 } from "lucide-react";
+import { Building2, Loader2, Search, MapPin, CheckCircle2 } from "lucide-react";
 
 const companySchema = z.object({
   name: z.string().min(2, "Nome deve ter no mínimo 2 caracteres").max(100),
@@ -38,7 +39,9 @@ const companySchema = z.object({
   segment: z.string().min(1, "Selecione um segmento"),
   email: z.string().email("Email inválido").optional().or(z.literal("")),
   phone: z.string().optional(),
+  cep: z.string().optional(),
   address: z.string().optional(),
+  neighborhood: z.string().optional(),
   city: z.string().optional(),
   state: z.string().optional(),
   monthly_budget: z.string().optional(),
@@ -73,6 +76,8 @@ const states = [
 
 export function CompanyFormDialog({ open, onClose, onSuccess }: CompanyFormDialogProps) {
   const [loading, setLoading] = useState(false);
+  const [cepLoading, setCepLoading] = useState(false);
+  const [cepFound, setCepFound] = useState(false);
   const { toast } = useToast();
 
   const form = useForm<CompanyFormValues>({
@@ -83,12 +88,57 @@ export function CompanyFormDialog({ open, onClose, onSuccess }: CompanyFormDialo
       segment: "",
       email: "",
       phone: "",
+      cep: "",
       address: "",
+      neighborhood: "",
       city: "",
       state: "",
       monthly_budget: "",
     },
   });
+
+  const handleCEPSearch = async (cep: string) => {
+    const cleanCEP = cep.replace(/\D/g, "");
+    
+    if (cleanCEP.length !== 8) {
+      setCepFound(false);
+      return;
+    }
+
+    setCepLoading(true);
+    setCepFound(false);
+
+    try {
+      const addressData = await fetchAddressByCEP(cep);
+      
+      if (addressData) {
+        form.setValue("address", addressData.logradouro || "");
+        form.setValue("neighborhood", addressData.bairro || "");
+        form.setValue("city", addressData.localidade || "");
+        form.setValue("state", addressData.uf || "");
+        setCepFound(true);
+        
+        toast({
+          title: "Endereço encontrado!",
+          description: `${addressData.logradouro}, ${addressData.bairro} - ${addressData.localidade}/${addressData.uf}`,
+        });
+      } else {
+        toast({
+          variant: "destructive",
+          title: "CEP não encontrado",
+          description: "Verifique o CEP e tente novamente.",
+        });
+      }
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Erro na busca",
+        description: "Não foi possível buscar o endereço. Tente novamente.",
+      });
+    } finally {
+      setCepLoading(false);
+    }
+  };
 
   const onSubmit = async (values: CompanyFormValues) => {
     setLoading(true);
@@ -243,6 +293,71 @@ export function CompanyFormDialog({ open, onClose, onSuccess }: CompanyFormDialo
                 )}
               />
 
+              {/* CEP with auto-search */}
+              <FormField
+                control={form.control}
+                name="cep"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center gap-2">
+                      <MapPin className="h-4 w-4 text-accent" />
+                      CEP
+                    </FormLabel>
+                    <div className="flex gap-2">
+                      <FormControl>
+                        <Input 
+                          placeholder="00000-000" 
+                          value={field.value}
+                          onChange={(e) => {
+                            const masked = maskCEP(e.target.value);
+                            field.onChange(masked);
+                            setCepFound(false);
+                            // Auto-search when CEP is complete
+                            if (masked.replace(/\D/g, "").length === 8) {
+                              handleCEPSearch(masked);
+                            }
+                          }}
+                          className={cepFound ? "border-success focus-visible:ring-success" : ""}
+                        />
+                      </FormControl>
+                      <Button 
+                        type="button" 
+                        variant="outline" 
+                        size="icon"
+                        onClick={() => handleCEPSearch(field.value || "")}
+                        disabled={cepLoading || !field.value || field.value.replace(/\D/g, "").length < 8}
+                      >
+                        {cepLoading ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : cepFound ? (
+                          <CheckCircle2 className="h-4 w-4 text-success" />
+                        ) : (
+                          <Search className="h-4 w-4" />
+                        )}
+                      </Button>
+                    </div>
+                    <FormDescription className="text-xs">
+                      Digite o CEP para preencher automaticamente
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="neighborhood"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Bairro</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Centro" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <FormField
                 control={form.control}
                 name="address"
@@ -250,7 +365,7 @@ export function CompanyFormDialog({ open, onClose, onSuccess }: CompanyFormDialo
                   <FormItem className="md:col-span-2">
                     <FormLabel>Endereço</FormLabel>
                     <FormControl>
-                      <Input placeholder="Rua, número, bairro" {...field} />
+                      <Input placeholder="Rua, número, complemento" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -277,7 +392,7 @@ export function CompanyFormDialog({ open, onClose, onSuccess }: CompanyFormDialo
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Estado</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="UF" />
