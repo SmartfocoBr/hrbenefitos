@@ -1,12 +1,13 @@
 import { useState, useMemo } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
-import EmployeeCard from "@/components/employees/EmployeeCard";
-import EmployeeDetailDialog from "@/components/employees/EmployeeDetailDialog";
-import { Employee } from "@/types/employee";
-import { employeesData, statusConfig, contractConfig } from "@/lib/employeesData";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useEmployees, Employee } from "@/hooks/useEmployees";
+import { RealtimeIndicator } from "@/components/dashboard/RealtimeIndicator";
 import { 
   Search, 
   Plus, 
@@ -17,59 +18,119 @@ import {
   DollarSign,
   UserCheck,
   Filter,
-  Grid3X3,
+  LayoutGrid,
   List,
-  LayoutGrid
+  Mail,
+  Phone,
+  Building2,
+  Briefcase,
+  Calendar
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import StatsCard from "@/components/dashboard/StatsCard";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
-type StatusFilter = "all" | keyof typeof statusConfig;
-type ContractFilter = "all" | keyof typeof contractConfig;
+type StatusFilter = "all" | "active" | "inactive" | "on_leave" | "terminated";
+type ContractFilter = "all" | "clt" | "pj" | "intern" | "temp";
+
+const statusConfig: Record<string, { label: string; color: string }> = {
+  active: { label: "Ativo", color: "bg-green-500/10 text-green-600 border-green-500/20" },
+  inactive: { label: "Inativo", color: "bg-gray-500/10 text-gray-600 border-gray-500/20" },
+  on_leave: { label: "Afastado", color: "bg-amber-500/10 text-amber-600 border-amber-500/20" },
+  terminated: { label: "Desligado", color: "bg-red-500/10 text-red-600 border-red-500/20" },
+};
+
+const contractConfig: Record<string, { label: string; color: string }> = {
+  clt: { label: "CLT", color: "bg-blue-500/10 text-blue-600" },
+  pj: { label: "PJ", color: "bg-purple-500/10 text-purple-600" },
+  intern: { label: "Estágio", color: "bg-cyan-500/10 text-cyan-600" },
+  temp: { label: "Temp", color: "bg-orange-500/10 text-orange-600" },
+};
 
 const Employees = () => {
+  const { employees, stats, isLoading, error } = useEmployees();
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [contractFilter, setContractFilter] = useState<ContractFilter>("all");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
-  const [dialogOpen, setDialogOpen] = useState(false);
 
   const filteredEmployees = useMemo(() => {
-    return employeesData.filter((employee) => {
+    return employees.filter((employee) => {
+      const fullName = `${employee.first_name} ${employee.last_name}`.toLowerCase();
       const matchesSearch = 
-        employee.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        fullName.includes(searchQuery.toLowerCase()) ||
         employee.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        employee.department.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        employee.position.toLowerCase().includes(searchQuery.toLowerCase());
+        (employee.department?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false) ||
+        (employee.position?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false);
       
       const matchesStatus = statusFilter === "all" || employee.status === statusFilter;
-      const matchesContract = contractFilter === "all" || employee.contractType === contractFilter;
+      const matchesContract = contractFilter === "all" || employee.contract_type === contractFilter;
       
       return matchesSearch && matchesStatus && matchesContract;
     });
-  }, [searchQuery, statusFilter, contractFilter]);
+  }, [employees, searchQuery, statusFilter, contractFilter]);
 
-  const stats = useMemo(() => {
-    const active = employeesData.filter(e => e.status === "active").length;
-    const total = employeesData.length;
-    const totalBenefits = employeesData.reduce((sum, e) => sum + e.activeBenefits, 0);
-    const totalCost = employeesData.reduce((sum, e) => sum + e.totalBenefitsCost, 0);
-    const totalDependents = employeesData.reduce((sum, e) => sum + e.dependentsCount, 0);
-    
-    return {
-      total,
-      active,
-      totalBenefits,
-      totalCost,
-      totalDependents,
-      avgBenefitsPerEmployee: (totalBenefits / total).toFixed(1),
-    };
-  }, []);
+  const EmployeeCard = ({ employee }: { employee: Employee }) => {
+    const initials = `${employee.first_name[0]}${employee.last_name[0]}`.toUpperCase();
+    const statusCfg = statusConfig[employee.status];
+    const contractCfg = contractConfig[employee.contract_type];
 
-  const handleViewEmployee = (employee: Employee) => {
-    setSelectedEmployee(employee);
-    setDialogOpen(true);
+    return (
+      <Card className="p-5 card-elevated hover:shadow-lg transition-all duration-300 group">
+        <div className="flex items-start gap-4">
+          <Avatar className="h-12 w-12 border-2 border-border group-hover:border-primary transition-colors">
+            <AvatarImage src={employee.avatar_url || undefined} />
+            <AvatarFallback className="bg-primary/10 text-primary font-semibold">
+              {initials}
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-1">
+              <h3 className="font-semibold text-foreground truncate group-hover:text-primary transition-colors">
+                {employee.first_name} {employee.last_name}
+              </h3>
+              <Badge variant="outline" className={cn("text-xs shrink-0", statusCfg?.color)}>
+                {statusCfg?.label}
+              </Badge>
+            </div>
+            <p className="text-sm text-muted-foreground truncate">
+              {employee.position || "Cargo não definido"}
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-4 space-y-2 text-sm">
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <Mail className="h-4 w-4 shrink-0" />
+            <span className="truncate">{employee.email}</span>
+          </div>
+          {employee.department && (
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <Building2 className="h-4 w-4 shrink-0" />
+              <span className="truncate">{employee.department}</span>
+            </div>
+          )}
+          {employee.hire_date && (
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <Calendar className="h-4 w-4 shrink-0" />
+              <span>Desde {format(new Date(employee.hire_date), "MMM yyyy", { locale: ptBR })}</span>
+            </div>
+          )}
+        </div>
+
+        <div className="mt-4 pt-4 border-t border-border flex items-center justify-between">
+          <Badge className={cn("text-xs", contractCfg?.color)}>
+            {contractCfg?.label}
+          </Badge>
+          {employee.salary && (
+            <span className="text-sm font-medium text-foreground">
+              R$ {Number(employee.salary).toLocaleString("pt-BR")}
+            </span>
+          )}
+        </div>
+      </Card>
+    );
   };
 
   return (
@@ -78,7 +139,10 @@ const Employees = () => {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 animate-fade-in">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Colaboradores</h1>
+            <div className="flex items-center gap-3">
+              <h1 className="text-3xl font-bold text-foreground">Colaboradores</h1>
+              <RealtimeIndicator isConnected={!isLoading} />
+            </div>
             <p className="text-muted-foreground mt-1">
               {stats.total} colaboradores • {stats.active} ativos
             </p>
@@ -104,18 +168,18 @@ const Employees = () => {
           <div className="animate-fade-in-up">
             <StatsCard 
               title="Total Colaboradores" 
-              value={stats.total.toString()}
-              change="+12"
+              value={isLoading ? "..." : stats.total.toString()}
+              change={`${stats.clt} CLT`}
               changeType="positive"
               icon={Users}
-              description="este mês"
+              description="cadastrados"
             />
           </div>
           <div className="animate-fade-in-up animation-delay-100">
             <StatsCard 
               title="Ativos" 
-              value={stats.active.toString()}
-              change={`${Math.round((stats.active / stats.total) * 100)}%`}
+              value={isLoading ? "..." : stats.active.toString()}
+              change={stats.total > 0 ? `${Math.round((stats.active / stats.total) * 100)}%` : "0%"}
               changeType="positive"
               icon={UserCheck}
               description="do total"
@@ -123,29 +187,28 @@ const Employees = () => {
           </div>
           <div className="animate-fade-in-up animation-delay-200">
             <StatsCard 
-              title="Benefícios Distribuídos" 
-              value={stats.totalBenefits.toString()}
-              change={`~${stats.avgBenefitsPerEmployee}/pessoa`}
+              title="Dependentes" 
+              value={isLoading ? "..." : stats.totalDependents.toString()}
+              change="ativos"
               changeType="neutral"
               icon={Gift}
-              description="média"
+              description="cadastrados"
             />
           </div>
           <div className="animate-fade-in-up animation-delay-300">
             <StatsCard 
-              title="Custo Total Benefícios" 
-              value={`R$${(stats.totalCost / 1000).toFixed(0)}K`}
-              change="-2.1%"
-              changeType="positive"
+              title="Folha Total" 
+              value={isLoading ? "..." : `R$${(stats.totalSalary / 1000).toFixed(0)}K`}
+              change="mensal"
+              changeType="neutral"
               icon={DollarSign}
-              description="vs. mês anterior"
+              description="salários"
             />
           </div>
         </div>
 
         {/* Filters */}
         <div className="flex flex-col md:flex-row gap-4 animate-fade-in-up animation-delay-200">
-          {/* Search */}
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
@@ -156,7 +219,6 @@ const Employees = () => {
             />
           </div>
 
-          {/* Status Filter */}
           <div className="flex gap-2 flex-wrap">
             <Badge
               variant="outline"
@@ -187,7 +249,6 @@ const Employees = () => {
             ))}
           </div>
 
-          {/* Contract Filter */}
           <div className="flex gap-2">
             {Object.entries(contractConfig).map(([key, config]) => (
               <Button
@@ -201,7 +262,6 @@ const Employees = () => {
             ))}
           </div>
 
-          {/* View Mode */}
           <div className="flex border border-border rounded-lg overflow-hidden">
             <button
               className={cn(
@@ -224,40 +284,58 @@ const Employees = () => {
           </div>
         </div>
 
-        {/* Employees Grid */}
-        <div className={cn(
-          "animate-fade-in-up animation-delay-300",
-          viewMode === "grid" 
-            ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" 
-            : "space-y-4"
-        )}>
-          {filteredEmployees.map((employee, index) => (
-            <div 
-              key={employee.id} 
-              className="animate-fade-in-up"
-              style={{ animationDelay: `${index * 50}ms` }}
-            >
-              <EmployeeCard employee={employee} onView={handleViewEmployee} />
-            </div>
-          ))}
-        </div>
+        {/* Loading State */}
+        {isLoading && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {[...Array(8)].map((_, i) => (
+              <Card key={i} className="p-5">
+                <div className="flex items-start gap-4">
+                  <Skeleton className="h-12 w-12 rounded-full" />
+                  <div className="flex-1">
+                    <Skeleton className="h-5 w-3/4 mb-2" />
+                    <Skeleton className="h-4 w-1/2" />
+                  </div>
+                </div>
+                <div className="mt-4 space-y-2">
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-2/3" />
+                </div>
+              </Card>
+            ))}
+          </div>
+        )}
 
-        {filteredEmployees.length === 0 && (
+        {/* Employees Grid */}
+        {!isLoading && (
+          <div className={cn(
+            "animate-fade-in-up animation-delay-300",
+            viewMode === "grid" 
+              ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" 
+              : "space-y-4"
+          )}>
+            {filteredEmployees.map((employee, index) => (
+              <div 
+                key={employee.id} 
+                className="animate-fade-in-up"
+                style={{ animationDelay: `${index * 50}ms` }}
+              >
+                <EmployeeCard employee={employee} />
+              </div>
+            ))}
+          </div>
+        )}
+
+        {!isLoading && filteredEmployees.length === 0 && (
           <div className="text-center py-16">
             <Users className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
             <h3 className="text-lg font-semibold text-foreground">Nenhum colaborador encontrado</h3>
             <p className="text-muted-foreground mt-1">
-              Tente ajustar os filtros ou termos de busca
+              {employees.length === 0 
+                ? "Adicione colaboradores para começar" 
+                : "Tente ajustar os filtros ou termos de busca"}
             </p>
           </div>
         )}
-
-        {/* Employee Detail Dialog */}
-        <EmployeeDetailDialog
-          employee={selectedEmployee}
-          open={dialogOpen}
-          onClose={() => setDialogOpen(false)}
-        />
       </div>
     </DashboardLayout>
   );

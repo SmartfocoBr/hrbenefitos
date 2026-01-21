@@ -169,9 +169,13 @@ const Auth = () => {
         }} />
 
         <div className="relative z-10 flex flex-col justify-between w-full p-12">
-          {/* Logo */}
-          <div className="flex items-center gap-3">
-            <img src={logo} alt="BenefitOS" className="h-10 brightness-0 invert" />
+          {/* Logo - Destacado */}
+          <div className="flex items-center gap-4">
+            <img 
+              src={logo} 
+              alt="BenefitOS" 
+              className="h-14 w-auto brightness-0 invert drop-shadow-lg" 
+            />
           </div>
 
           {/* Main content */}
@@ -213,9 +217,13 @@ const Auth = () => {
       {/* Right Panel - Auth Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-background">
         <div className="w-full max-w-md space-y-8 animate-fade-in">
-          {/* Mobile logo */}
+          {/* Mobile logo - Destacado */}
           <div className="lg:hidden flex justify-center mb-8">
-            <img src={logo} alt="BenefitOS" className="h-10" />
+            <img 
+              src={logo} 
+              alt="BenefitOS" 
+              className="h-16 w-auto drop-shadow-md" 
+            />
           </div>
 
           <div className="text-center space-y-2">
