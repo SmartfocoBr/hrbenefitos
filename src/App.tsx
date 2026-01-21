@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Auth from "./pages/Auth";
+import Reports from "./pages/Reports";
 import Dashboard from "./pages/Dashboard";
 import Benefits from "./pages/Benefits";
 import Integrations from "./pages/Integrations";
@@ -32,7 +33,7 @@ const App = () => (
             <Route path="/employees" element={<ProtectedRoute><Employees /></ProtectedRoute>} />
             <Route path="/companies" element={<ProtectedRoute><Companies /></ProtectedRoute>} />
             <Route path="/integrations" element={<ProtectedRoute><Integrations /></ProtectedRoute>} />
-            <Route path="/reports" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+            <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
             <Route path="/audit" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/financial" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/chatbot" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
