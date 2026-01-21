@@ -14,16 +14,538 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      benefits: {
+        Row: {
+          category: Database["public"]["Enums"]["benefit_category"]
+          created_at: string
+          description: string | null
+          icon: string | null
+          id: string
+          is_active: boolean | null
+          is_taxable: boolean | null
+          legal_basis: string | null
+          name: string
+          provider: string | null
+          tax_percentage: number | null
+          updated_at: string
+        }
+        Insert: {
+          category: Database["public"]["Enums"]["benefit_category"]
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_taxable?: boolean | null
+          legal_basis?: string | null
+          name: string
+          provider?: string | null
+          tax_percentage?: number | null
+          updated_at?: string
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["benefit_category"]
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_taxable?: boolean | null
+          legal_basis?: string | null
+          name?: string
+          provider?: string | null
+          tax_percentage?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      companies: {
+        Row: {
+          address: string | null
+          city: string | null
+          cnpj: string
+          created_at: string
+          email: string | null
+          id: string
+          logo_url: string | null
+          monthly_budget: number | null
+          monthly_spent: number | null
+          name: string
+          phone: string | null
+          segment: string | null
+          state: string | null
+          status: Database["public"]["Enums"]["company_status"]
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          city?: string | null
+          cnpj: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          logo_url?: string | null
+          monthly_budget?: number | null
+          monthly_spent?: number | null
+          name: string
+          phone?: string | null
+          segment?: string | null
+          state?: string | null
+          status?: Database["public"]["Enums"]["company_status"]
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          city?: string | null
+          cnpj?: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          logo_url?: string | null
+          monthly_budget?: number | null
+          monthly_spent?: number | null
+          name?: string
+          phone?: string | null
+          segment?: string | null
+          state?: string | null
+          status?: Database["public"]["Enums"]["company_status"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      company_benefit_policies: {
+        Row: {
+          benefit_id: string
+          company_id: string
+          contract_types: Database["public"]["Enums"]["contract_type"][] | null
+          created_at: string
+          created_by: string | null
+          eligibility_rules: Json | null
+          id: string
+          is_enabled: boolean | null
+          min_tenure_days: number | null
+          monthly_limit: number | null
+          updated_at: string
+        }
+        Insert: {
+          benefit_id: string
+          company_id: string
+          contract_types?: Database["public"]["Enums"]["contract_type"][] | null
+          created_at?: string
+          created_by?: string | null
+          eligibility_rules?: Json | null
+          id?: string
+          is_enabled?: boolean | null
+          min_tenure_days?: number | null
+          monthly_limit?: number | null
+          updated_at?: string
+        }
+        Update: {
+          benefit_id?: string
+          company_id?: string
+          contract_types?: Database["public"]["Enums"]["contract_type"][] | null
+          created_at?: string
+          created_by?: string | null
+          eligibility_rules?: Json | null
+          id?: string
+          is_enabled?: boolean | null
+          min_tenure_days?: number | null
+          monthly_limit?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_benefit_policies_benefit_id_fkey"
+            columns: ["benefit_id"]
+            isOneToOne: false
+            referencedRelation: "benefits"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "company_benefit_policies_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cost_centers: {
+        Row: {
+          budget: number | null
+          code: string | null
+          company_id: string
+          created_at: string
+          id: string
+          manager_name: string | null
+          name: string
+          spent: number | null
+          updated_at: string
+        }
+        Insert: {
+          budget?: number | null
+          code?: string | null
+          company_id: string
+          created_at?: string
+          id?: string
+          manager_name?: string | null
+          name: string
+          spent?: number | null
+          updated_at?: string
+        }
+        Update: {
+          budget?: number | null
+          code?: string | null
+          company_id?: string
+          created_at?: string
+          id?: string
+          manager_name?: string | null
+          name?: string
+          spent?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cost_centers_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      employee_dependents: {
+        Row: {
+          birth_date: string | null
+          cpf: string | null
+          created_at: string
+          employee_id: string
+          id: string
+          is_active: boolean | null
+          name: string
+          relationship: string
+          updated_at: string
+        }
+        Insert: {
+          birth_date?: string | null
+          cpf?: string | null
+          created_at?: string
+          employee_id: string
+          id?: string
+          is_active?: boolean | null
+          name: string
+          relationship: string
+          updated_at?: string
+        }
+        Update: {
+          birth_date?: string | null
+          cpf?: string | null
+          created_at?: string
+          employee_id?: string
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          relationship?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employee_dependents_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      employee_wallets: {
+        Row: {
+          available_balance: number | null
+          created_at: string
+          employee_id: string
+          id: string
+          last_credit_date: string | null
+          reserved_balance: number | null
+          total_balance: number | null
+          updated_at: string
+        }
+        Insert: {
+          available_balance?: number | null
+          created_at?: string
+          employee_id: string
+          id?: string
+          last_credit_date?: string | null
+          reserved_balance?: number | null
+          total_balance?: number | null
+          updated_at?: string
+        }
+        Update: {
+          available_balance?: number | null
+          created_at?: string
+          employee_id?: string
+          id?: string
+          last_credit_date?: string | null
+          reserved_balance?: number | null
+          total_balance?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employee_wallets_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: true
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      employees: {
+        Row: {
+          avatar_url: string | null
+          company_id: string
+          contract_type: Database["public"]["Enums"]["contract_type"]
+          cost_center_id: string | null
+          cpf: string | null
+          created_at: string
+          department: string | null
+          email: string
+          first_name: string
+          hire_date: string | null
+          id: string
+          last_name: string
+          phone: string | null
+          position: string | null
+          salary: number | null
+          status: Database["public"]["Enums"]["employee_status"]
+          updated_at: string
+          user_id: string | null
+          work_hours: number | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          company_id: string
+          contract_type?: Database["public"]["Enums"]["contract_type"]
+          cost_center_id?: string | null
+          cpf?: string | null
+          created_at?: string
+          department?: string | null
+          email: string
+          first_name: string
+          hire_date?: string | null
+          id?: string
+          last_name: string
+          phone?: string | null
+          position?: string | null
+          salary?: number | null
+          status?: Database["public"]["Enums"]["employee_status"]
+          updated_at?: string
+          user_id?: string | null
+          work_hours?: number | null
+        }
+        Update: {
+          avatar_url?: string | null
+          company_id?: string
+          contract_type?: Database["public"]["Enums"]["contract_type"]
+          cost_center_id?: string | null
+          cpf?: string | null
+          created_at?: string
+          department?: string | null
+          email?: string
+          first_name?: string
+          hire_date?: string | null
+          id?: string
+          last_name?: string
+          phone?: string | null
+          position?: string | null
+          salary?: number | null
+          status?: Database["public"]["Enums"]["employee_status"]
+          updated_at?: string
+          user_id?: string | null
+          work_hours?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employees_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "employees_cost_center_id_fkey"
+            columns: ["cost_center_id"]
+            isOneToOne: false
+            referencedRelation: "cost_centers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          company_id: string | null
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          company_id?: string | null
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          company_id?: string | null
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      wallet_allocations: {
+        Row: {
+          allocated_amount: number | null
+          benefit_id: string
+          created_at: string
+          id: string
+          percentage: number | null
+          updated_at: string
+          used_amount: number | null
+          wallet_id: string
+        }
+        Insert: {
+          allocated_amount?: number | null
+          benefit_id: string
+          created_at?: string
+          id?: string
+          percentage?: number | null
+          updated_at?: string
+          used_amount?: number | null
+          wallet_id: string
+        }
+        Update: {
+          allocated_amount?: number | null
+          benefit_id?: string
+          created_at?: string
+          id?: string
+          percentage?: number | null
+          updated_at?: string
+          used_amount?: number | null
+          wallet_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wallet_allocations_benefit_id_fkey"
+            columns: ["benefit_id"]
+            isOneToOne: false
+            referencedRelation: "benefits"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "wallet_allocations_wallet_id_fkey"
+            columns: ["wallet_id"]
+            isOneToOne: false
+            referencedRelation: "employee_wallets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      wallet_transactions: {
+        Row: {
+          amount: number
+          benefit_id: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          reference_id: string | null
+          transaction_type: Database["public"]["Enums"]["transaction_type"]
+          wallet_id: string
+        }
+        Insert: {
+          amount: number
+          benefit_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          reference_id?: string | null
+          transaction_type: Database["public"]["Enums"]["transaction_type"]
+          wallet_id: string
+        }
+        Update: {
+          amount?: number
+          benefit_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          reference_id?: string | null
+          transaction_type?: Database["public"]["Enums"]["transaction_type"]
+          wallet_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wallet_transactions_benefit_id_fkey"
+            columns: ["benefit_id"]
+            isOneToOne: false
+            referencedRelation: "benefits"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "wallet_transactions_wallet_id_fkey"
+            columns: ["wallet_id"]
+            isOneToOne: false
+            referencedRelation: "employee_wallets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_employee_company_id: {
+        Args: { check_employee_id: string }
+        Returns: string
+      }
+      get_user_company_id: { Args: never; Returns: string }
+      get_wallet_employee_id: {
+        Args: { check_wallet_id: string }
+        Returns: string
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      is_company_admin: { Args: { check_company_id: string }; Returns: boolean }
+      is_employee_owner: {
+        Args: { check_employee_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "super_admin" | "company_admin" | "hr_manager" | "employee"
+      benefit_category:
+        | "alimentacao"
+        | "saude"
+        | "transporte"
+        | "bemestar"
+        | "financeiro"
+        | "outros"
+      company_status: "active" | "inactive" | "pending"
+      contract_type: "clt" | "pj" | "intern" | "temp"
+      employee_status: "active" | "inactive" | "on_leave" | "terminated"
+      transaction_type: "credit" | "debit" | "transfer" | "adjustment"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +672,20 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["super_admin", "company_admin", "hr_manager", "employee"],
+      benefit_category: [
+        "alimentacao",
+        "saude",
+        "transporte",
+        "bemestar",
+        "financeiro",
+        "outros",
+      ],
+      company_status: ["active", "inactive", "pending"],
+      contract_type: ["clt", "pj", "intern", "temp"],
+      employee_status: ["active", "inactive", "on_leave", "terminated"],
+      transaction_type: ["credit", "debit", "transfer", "adjustment"],
+    },
   },
 } as const
