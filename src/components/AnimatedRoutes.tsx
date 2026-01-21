@@ -10,6 +10,8 @@ import Integrations from "@/pages/Integrations";
 import Employees from "@/pages/Employees";
 import Companies from "@/pages/Companies";
 import Wallet from "@/pages/Wallet";
+import Financial from "@/pages/Financial";
+import Audit from "@/pages/Audit";
 import NotFound from "@/pages/NotFound";
 
 const AnimatedRoutes = () => {
@@ -111,7 +113,7 @@ const AnimatedRoutes = () => {
           element={
             <ProtectedRoute>
               <PageTransition>
-                <Dashboard />
+                <Audit />
               </PageTransition>
             </ProtectedRoute>
           }
@@ -122,7 +124,7 @@ const AnimatedRoutes = () => {
           element={
             <ProtectedRoute>
               <PageTransition>
-                <Dashboard />
+                <Financial />
               </PageTransition>
             </ProtectedRoute>
           }

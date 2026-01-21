@@ -169,9 +169,9 @@ const Auth = () => {
         }} />
 
         <div className="relative z-10 flex flex-col justify-between w-full p-12">
-          {/* Logo - Destacado e maior */}
+          {/* Logo - Triplicado em tamanho */}
           <div className="flex items-center gap-4">
-            <span className="text-4xl font-bold text-primary-foreground font-sans tracking-tight drop-shadow-2xl">
+            <span className="text-8xl font-bold text-primary-foreground font-sans tracking-tight drop-shadow-2xl">
               BenefitOS<span className="text-accent">.</span>
             </span>
           </div>
@@ -215,9 +215,9 @@ const Auth = () => {
       {/* Right Panel - Auth Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-background">
         <div className="w-full max-w-md space-y-8 animate-fade-in">
-          {/* Mobile logo - Destacado */}
+          {/* Mobile logo - Triplicado */}
           <div className="lg:hidden flex justify-center mb-8">
-            <span className="text-3xl font-bold text-foreground font-sans tracking-tight drop-shadow-xl">
+            <span className="text-6xl font-bold text-foreground font-sans tracking-tight drop-shadow-xl">
               BenefitOS<span className="text-accent">.</span>
             </span>
           </div>

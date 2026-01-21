@@ -9,25 +9,19 @@ interface PageTransitionProps {
 const pageVariants: Variants = {
   initial: {
     opacity: 0,
-    y: 20,
-    scale: 0.98,
   },
   animate: {
     opacity: 1,
-    y: 0,
-    scale: 1,
   },
   exit: {
     opacity: 0,
-    y: -20,
-    scale: 0.98,
   },
 };
 
 const pageTransition: Transition = {
   type: "tween",
-  ease: [0.4, 0, 0.2, 1],
-  duration: 0.3,
+  ease: "easeOut",
+  duration: 0.15,
 };
 
 export const PageTransition = ({ children, className = "" }: PageTransitionProps) => {
@@ -52,7 +46,7 @@ export const FadeTransition = ({ children, className = "" }: PageTransitionProps
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.2, ease: "easeInOut" }}
+      transition={{ duration: 0.12, ease: "easeOut" }}
       className={className}
     >
       {children}
@@ -64,10 +58,10 @@ export const FadeTransition = ({ children, className = "" }: PageTransitionProps
 export const SlideTransition = ({ children, className = "" }: PageTransitionProps) => {
   return (
     <motion.div
-      initial={{ opacity: 0, x: 30 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -30 }}
-      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.12, ease: "easeOut" }}
       className={className}
     >
       {children}

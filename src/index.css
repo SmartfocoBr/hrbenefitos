@@ -89,74 +89,74 @@
   }
 
   .dark {
-    /* Background: Deep slate with subtle blue undertone */
-    --background: 230 25% 9%;
-    --foreground: 210 40% 96%;
+    /* Background: Deep neutral charcoal - elegant and minimal */
+    --background: 220 15% 6%;
+    --foreground: 220 10% 94%;
 
-    /* Cards: Slightly elevated from background */
-    --card: 230 25% 12%;
-    --card-foreground: 210 40% 96%;
+    /* Cards: Subtle elevation with warm undertones */
+    --card: 220 12% 9%;
+    --card-foreground: 220 10% 94%;
 
-    --popover: 230 25% 11%;
-    --popover-foreground: 210 40% 96%;
+    --popover: 220 12% 8%;
+    --popover-foreground: 220 10% 94%;
 
-    /* Primary: Clean white for contrast */
-    --primary: 210 40% 96%;
-    --primary-foreground: 230 25% 9%;
+    /* Primary: Soft white for text hierarchy */
+    --primary: 220 10% 94%;
+    --primary-foreground: 220 15% 6%;
 
-    /* Secondary: Subtle elevation */
-    --secondary: 230 20% 18%;
-    --secondary-foreground: 210 40% 96%;
+    /* Secondary: Elegant dark gray */
+    --secondary: 220 10% 14%;
+    --secondary-foreground: 220 10% 90%;
 
-    /* Muted: Softer backgrounds */
-    --muted: 230 20% 15%;
-    --muted-foreground: 220 15% 60%;
+    /* Muted: Refined grays */
+    --muted: 220 10% 12%;
+    --muted-foreground: 220 8% 55%;
 
-    /* Accent: Vibrant teal/cyan for CTAs */
-    --accent: 173 80% 50%;
-    --accent-foreground: 230 25% 9%;
+    /* Accent: Refined teal - softer and more elegant */
+    --accent: 175 60% 45%;
+    --accent-foreground: 220 15% 6%;
 
-    /* Destructive: Softer red */
-    --destructive: 0 65% 55%;
+    /* Destructive: Elegant muted red */
+    --destructive: 0 50% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    /* Success: Emerald green */
-    --success: 160 84% 39%;
+    /* Success: Refined emerald */
+    --success: 160 50% 40%;
     --success-foreground: 0 0% 100%;
 
     /* Warning: Warm amber */
-    --warning: 45 93% 58%;
-    --warning-foreground: 230 25% 9%;
+    --warning: 40 70% 55%;
+    --warning-foreground: 220 15% 6%;
 
-    /* Info: Sky blue */
-    --info: 199 89% 55%;
+    /* Info: Soft sky */
+    --info: 200 60% 55%;
     --info-foreground: 0 0% 100%;
 
-    /* Borders: Subtle separation */
-    --border: 230 20% 20%;
-    --input: 230 20% 18%;
-    --ring: 173 80% 50%;
+    /* Borders: Very subtle */
+    --border: 220 10% 15%;
+    --input: 220 10% 12%;
+    --ring: 175 60% 45%;
 
-    /* Sidebar: Deeper tones */
-    --sidebar-background: 230 30% 6%;
-    --sidebar-foreground: 210 40% 96%;
-    --sidebar-primary: 173 80% 50%;
-    --sidebar-primary-foreground: 230 25% 9%;
-    --sidebar-accent: 230 25% 12%;
-    --sidebar-accent-foreground: 210 40% 96%;
-    --sidebar-border: 230 20% 15%;
-    --sidebar-ring: 173 80% 50%;
+    /* Sidebar: Deep elegant tones */
+    --sidebar-background: 220 15% 5%;
+    --sidebar-foreground: 220 10% 90%;
+    --sidebar-primary: 175 60% 45%;
+    --sidebar-primary-foreground: 220 15% 6%;
+    --sidebar-accent: 220 12% 10%;
+    --sidebar-accent-foreground: 220 10% 90%;
+    --sidebar-border: 220 10% 12%;
+    --sidebar-ring: 175 60% 45%;
 
-    /* Glass effects */
-    --glass: 230 25% 10% / 0.85;
-    --glass-border: 230 20% 25% / 0.4;
+    /* Glass effects - refined */
+    --glass: 220 12% 8% / 0.9;
+    --glass-border: 220 10% 20% / 0.3;
 
-    /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(210 40% 96%) 0%, hsl(210 30% 85%) 100%);
-    --gradient-accent: linear-gradient(135deg, hsl(173 80% 50%) 0%, hsl(188 85% 55%) 100%);
-    --gradient-hero: linear-gradient(135deg, hsl(230 30% 6%) 0%, hsl(230 25% 12%) 50%, hsl(173 60% 20%) 100%);
-    --gradient-card: linear-gradient(180deg, hsl(230 25% 14%) 0%, hsl(230 25% 10%) 100%);
-    --gradient-glow: radial-gradient(ellipse at center, hsl(173 80% 50% / 0.15) 0%, transparent 70%);
+    /* Gradients - elegant and subtle */
+    --gradient-primary: linear-gradient(135deg, hsl(220 10% 94%) 0%, hsl(220 10% 80%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(175 60% 45%) 0%, hsl(180 50% 50%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(220 15% 5%) 0%, hsl(220 12% 10%) 50%, hsl(175 40% 15%) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(220 12% 11%) 0%, hsl(220 12% 8%) 100%);
+    --gradient-glow: radial-gradient(ellipse at center, hsl(175 60% 45% / 0.1) 0%, transparent 70%);
   }
 }
 
