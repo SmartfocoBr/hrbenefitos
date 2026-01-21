@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { maskCPF, maskPhone, unmask } from "@/lib/masks";
+import { maskCPF, maskPhone, unmask, validateCPF } from "@/lib/masks";
 import {
   Dialog,
   DialogContent,
@@ -34,7 +34,9 @@ const employeeSchema = z.object({
   first_name: z.string().min(2, "Nome deve ter no mínimo 2 caracteres").max(50),
   last_name: z.string().min(2, "Sobrenome deve ter no mínimo 2 caracteres").max(50),
   email: z.string().email("Email inválido"),
-  cpf: z.string().optional(),
+  cpf: z.string()
+    .optional()
+    .refine((val) => !val || val.length === 0 || validateCPF(val), { message: "CPF inválido" }),
   phone: z.string().optional(),
   position: z.string().optional(),
   department: z.string().optional(),
