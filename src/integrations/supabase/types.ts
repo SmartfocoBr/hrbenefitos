@@ -583,6 +583,57 @@ export type Database = {
           },
         ]
       }
+      employee_events: {
+        Row: {
+          created_at: string
+          employee_id: string | null
+          event_type: string
+          external_event_id: string
+          id: string
+          payload: Json | null
+          processed: boolean | null
+          processed_at: string | null
+          tenant_id: string
+        }
+        Insert: {
+          created_at?: string
+          employee_id?: string | null
+          event_type: string
+          external_event_id: string
+          id?: string
+          payload?: Json | null
+          processed?: boolean | null
+          processed_at?: string | null
+          tenant_id: string
+        }
+        Update: {
+          created_at?: string
+          employee_id?: string | null
+          event_type?: string
+          external_event_id?: string
+          id?: string
+          payload?: Json | null
+          processed?: boolean | null
+          processed_at?: string | null
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employee_events_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "employee_events_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       employee_wallets: {
         Row: {
           available_balance: number | null
@@ -634,6 +685,7 @@ export type Database = {
           created_at: string
           department: string | null
           email: string
+          external_id: string | null
           first_name: string
           hire_date: string | null
           id: string
@@ -655,6 +707,7 @@ export type Database = {
           created_at?: string
           department?: string | null
           email: string
+          external_id?: string | null
           first_name: string
           hire_date?: string | null
           id?: string
@@ -676,6 +729,7 @@ export type Database = {
           created_at?: string
           department?: string | null
           email?: string
+          external_id?: string | null
           first_name?: string
           hire_date?: string | null
           id?: string
@@ -701,6 +755,130 @@ export type Database = {
             columns: ["cost_center_id"]
             isOneToOne: false
             referencedRelation: "cost_centers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      import_jobs: {
+        Row: {
+          created_at: string
+          finished_at: string | null
+          id: string
+          initiated_by: string | null
+          mapping_id: string | null
+          source: string
+          status: string
+          summary: Json | null
+          tenant_id: string
+        }
+        Insert: {
+          created_at?: string
+          finished_at?: string | null
+          id?: string
+          initiated_by?: string | null
+          mapping_id?: string | null
+          source: string
+          status?: string
+          summary?: Json | null
+          tenant_id: string
+        }
+        Update: {
+          created_at?: string
+          finished_at?: string | null
+          id?: string
+          initiated_by?: string | null
+          mapping_id?: string | null
+          source?: string
+          status?: string
+          summary?: Json | null
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "import_jobs_mapping_id_fkey"
+            columns: ["mapping_id"]
+            isOneToOne: false
+            referencedRelation: "import_mappings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "import_jobs_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      import_mappings: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          mapping: Json
+          name: string
+          tenant_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          mapping?: Json
+          name: string
+          tenant_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          mapping?: Json
+          name?: string
+          tenant_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "import_mappings_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      import_reports: {
+        Row: {
+          checksum: string | null
+          created_at: string
+          file_url: string | null
+          id: string
+          import_job_id: string
+          report: Json | null
+        }
+        Insert: {
+          checksum?: string | null
+          created_at?: string
+          file_url?: string | null
+          id?: string
+          import_job_id: string
+          report?: Json | null
+        }
+        Update: {
+          checksum?: string | null
+          created_at?: string
+          file_url?: string | null
+          id?: string
+          import_job_id?: string
+          report?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "import_reports_import_job_id_fkey"
+            columns: ["import_job_id"]
+            isOneToOne: false
+            referencedRelation: "import_jobs"
             referencedColumns: ["id"]
           },
         ]
