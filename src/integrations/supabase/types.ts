@@ -1036,9 +1036,38 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      create_connector_execution: {
+        Args: {
+          p_connector_id: string
+          p_job_type: string
+          p_payload?: Json
+          p_tenant_id: string
+        }
+        Returns: string
+      }
       get_employee_company_id: {
         Args: { check_employee_id: string }
         Returns: string
+      }
+      get_next_dlq_item: {
+        Args: { p_connector_id: string }
+        Returns: {
+          connector_id: string
+          created_at: string
+          error: string | null
+          execution_id: string | null
+          failure_count: number | null
+          id: string
+          next_retry: string | null
+          payload: Json
+          updated_at: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "connector_dlq"
+          isOneToOne: false
+          isSetofReturn: true
+        }
       }
       get_user_company_id: { Args: never; Returns: string }
       get_wallet_employee_id: {
@@ -1056,6 +1085,24 @@ export type Database = {
       is_employee_owner: {
         Args: { check_employee_id: string }
         Returns: boolean
+      }
+      mark_execution_result: {
+        Args: {
+          p_execution_id: string
+          p_finished_at?: string
+          p_last_error?: string
+          p_response?: Json
+          p_status: string
+        }
+        Returns: undefined
+      }
+      mark_execution_started: {
+        Args: { p_execution_id: string }
+        Returns: undefined
+      }
+      move_execution_to_dlq: {
+        Args: { p_error: string; p_execution_id: string; p_payload: Json }
+        Returns: string
       }
     }
     Enums: {
