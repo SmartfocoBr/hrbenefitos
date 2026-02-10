@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      auth_audit_logs: {
+        Row: {
+          action: string
+          actor_id: string | null
+          created_at: string
+          hash: string | null
+          id: string
+          payload: Json | null
+          resource_id: string | null
+          resource_type: string | null
+          tenant_id: string | null
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          created_at?: string
+          hash?: string | null
+          id?: string
+          payload?: Json | null
+          resource_id?: string | null
+          resource_type?: string | null
+          tenant_id?: string | null
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          created_at?: string
+          hash?: string | null
+          id?: string
+          payload?: Json | null
+          resource_id?: string | null
+          resource_type?: string | null
+          tenant_id?: string | null
+        }
+        Relationships: []
+      }
       benefits: {
         Row: {
           category: Database["public"]["Enums"]["benefit_category"]
@@ -65,14 +101,17 @@ export type Database = {
           city: string | null
           cnpj: string
           created_at: string
+          created_by: string | null
           email: string | null
           id: string
           logo_url: string | null
+          metadata: Json | null
           monthly_budget: number | null
           monthly_spent: number | null
           name: string
           phone: string | null
           segment: string | null
+          slug: string | null
           state: string | null
           status: Database["public"]["Enums"]["company_status"]
           updated_at: string
@@ -82,14 +121,17 @@ export type Database = {
           city?: string | null
           cnpj: string
           created_at?: string
+          created_by?: string | null
           email?: string | null
           id?: string
           logo_url?: string | null
+          metadata?: Json | null
           monthly_budget?: number | null
           monthly_spent?: number | null
           name: string
           phone?: string | null
           segment?: string | null
+          slug?: string | null
           state?: string | null
           status?: Database["public"]["Enums"]["company_status"]
           updated_at?: string
@@ -99,19 +141,30 @@ export type Database = {
           city?: string | null
           cnpj?: string
           created_at?: string
+          created_by?: string | null
           email?: string | null
           id?: string
           logo_url?: string | null
+          metadata?: Json | null
           monthly_budget?: number | null
           monthly_spent?: number | null
           name?: string
           phone?: string | null
           segment?: string | null
+          slug?: string | null
           state?: string | null
           status?: Database["public"]["Enums"]["company_status"]
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "companies_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       company_benefit_policies: {
         Row: {
@@ -380,6 +433,71 @@ export type Database = {
           },
         ]
       }
+      mfa_settings: {
+        Row: {
+          backup_codes: Json | null
+          created_at: string
+          id: string
+          is_enabled: boolean | null
+          totp_secret: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          backup_codes?: Json | null
+          created_at?: string
+          id?: string
+          is_enabled?: boolean | null
+          totp_secret?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          backup_codes?: Json | null
+          created_at?: string
+          id?: string
+          is_enabled?: boolean | null
+          totp_secret?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mfa_settings_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       rate_limits: {
         Row: {
           count: number
@@ -404,11 +522,120 @@ export type Database = {
         }
         Relationships: []
       }
+      role_assignments: {
+        Row: {
+          created_at: string
+          id: string
+          role_id: string
+          scope: Json | null
+          subject_id: string
+          subject_type: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role_id: string
+          scope?: Json | null
+          subject_id: string
+          subject_type: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role_id?: string
+          scope?: Json | null
+          subject_id?: string
+          subject_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "role_assignments_role_id_fkey"
+            columns: ["role_id"]
+            isOneToOne: false
+            referencedRelation: "roles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      roles: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          permissions: Json | null
+          tenant_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          permissions?: Json | null
+          tenant_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          permissions?: Json | null
+          tenant_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "roles_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sso_providers: {
+        Row: {
+          created_at: string
+          enabled: boolean | null
+          id: string
+          metadata: Json | null
+          provider_type: string
+          tenant_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          enabled?: boolean | null
+          id?: string
+          metadata?: Json | null
+          provider_type: string
+          tenant_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          enabled?: boolean | null
+          id?: string
+          metadata?: Json | null
+          provider_type?: string
+          tenant_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sso_providers_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           company_id: string | null
           created_at: string
           id: string
+          is_active: boolean | null
           role: Database["public"]["Enums"]["app_role"]
           updated_at: string
           user_id: string
@@ -417,6 +644,7 @@ export type Database = {
           company_id?: string | null
           created_at?: string
           id?: string
+          is_active?: boolean | null
           role?: Database["public"]["Enums"]["app_role"]
           updated_at?: string
           user_id: string
@@ -425,6 +653,7 @@ export type Database = {
           company_id?: string | null
           created_at?: string
           id?: string
+          is_active?: boolean | null
           role?: Database["public"]["Enums"]["app_role"]
           updated_at?: string
           user_id?: string
