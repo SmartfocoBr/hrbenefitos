@@ -50,6 +50,63 @@ export type Database = {
         }
         Relationships: []
       }
+      benefit_catalog: {
+        Row: {
+          active: boolean
+          benefit_type: string
+          code: string
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          params: Json | null
+          provider_id: string | null
+          tenant_id: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          benefit_type?: string
+          code: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          params?: Json | null
+          provider_id?: string | null
+          tenant_id: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          benefit_type?: string
+          code?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          params?: Json | null
+          provider_id?: string | null
+          tenant_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "benefit_catalog_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "connectors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "benefit_catalog_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       benefits: {
         Row: {
           category: Database["public"]["Enums"]["benefit_category"]
@@ -759,6 +816,51 @@ export type Database = {
           },
         ]
       }
+      fiscal_rules: {
+        Row: {
+          benefit_id: string | null
+          contract_type: string | null
+          created_at: string
+          id: string
+          tax_treatment: Json
+          tenant_id: string
+          updated_at: string
+        }
+        Insert: {
+          benefit_id?: string | null
+          contract_type?: string | null
+          created_at?: string
+          id?: string
+          tax_treatment?: Json
+          tenant_id: string
+          updated_at?: string
+        }
+        Update: {
+          benefit_id?: string | null
+          contract_type?: string | null
+          created_at?: string
+          id?: string
+          tax_treatment?: Json
+          tenant_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fiscal_rules_benefit_id_fkey"
+            columns: ["benefit_id"]
+            isOneToOne: false
+            referencedRelation: "benefit_catalog"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fiscal_rules_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       import_jobs: {
         Row: {
           created_at: string
@@ -917,6 +1019,189 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: true
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      policies: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          name: string
+          policy_type: string
+          rules: Json
+          tenant_id: string
+          updated_at: string
+          version: number
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          policy_type: string
+          rules?: Json
+          tenant_id: string
+          updated_at?: string
+          version?: number
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          policy_type?: string
+          rules?: Json
+          tenant_id?: string
+          updated_at?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "policies_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "policies_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      policy_associations: {
+        Row: {
+          benefit_id: string
+          created_at: string
+          effective_from: string
+          effective_to: string | null
+          id: string
+          policy_id: string
+        }
+        Insert: {
+          benefit_id: string
+          created_at?: string
+          effective_from?: string
+          effective_to?: string | null
+          id?: string
+          policy_id: string
+        }
+        Update: {
+          benefit_id?: string
+          created_at?: string
+          effective_from?: string
+          effective_to?: string | null
+          id?: string
+          policy_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "policy_associations_benefit_id_fkey"
+            columns: ["benefit_id"]
+            isOneToOne: false
+            referencedRelation: "benefit_catalog"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "policy_associations_policy_id_fkey"
+            columns: ["policy_id"]
+            isOneToOne: false
+            referencedRelation: "policies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      policy_rules: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          policy_id: string
+          rule_json: Json
+          rule_order: number
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          policy_id: string
+          rule_json?: Json
+          rule_order?: number
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          policy_id?: string
+          rule_json?: Json
+          rule_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "policy_rules_policy_id_fkey"
+            columns: ["policy_id"]
+            isOneToOne: false
+            referencedRelation: "policies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      policy_simulations: {
+        Row: {
+          created_at: string
+          employee_id: string | null
+          id: string
+          input_context: Json
+          policy_id: string | null
+          result: Json
+          tenant_id: string
+        }
+        Insert: {
+          created_at?: string
+          employee_id?: string | null
+          id?: string
+          input_context?: Json
+          policy_id?: string | null
+          result?: Json
+          tenant_id: string
+        }
+        Update: {
+          created_at?: string
+          employee_id?: string | null
+          id?: string
+          input_context?: Json
+          policy_id?: string | null
+          result?: Json
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "policy_simulations_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "policy_simulations_policy_id_fkey"
+            columns: ["policy_id"]
+            isOneToOne: false
+            referencedRelation: "policies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "policy_simulations_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
             referencedColumns: ["id"]
           },
         ]
