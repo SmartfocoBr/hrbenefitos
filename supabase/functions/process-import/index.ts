@@ -265,10 +265,9 @@ Deno.serve(async (req) => {
 
     for (let chunkStart = 0; chunkStart < rows.length; chunkStart += CHUNK_SIZE) {
       const chunk = rows.slice(chunkStart, chunkStart + CHUNK_SIZE);
-      const employeesToUpsert: Record<string, unknown>[] = [];
 
       for (let i = 0; i < chunk.length; i++) {
-        const rowIndex = chunkStart + i + 2; // +2 for header + 1-indexed
+        const rowIndex = chunkStart + i + 2;
         const { mapped, errors } = validateAndMapRow(chunk[i], mappingRules, rowIndex);
         allErrors.push(...errors);
 
@@ -277,60 +276,35 @@ Deno.serve(async (req) => {
           continue;
         }
 
-        employeesToUpsert.push({
-          company_id: tenant_id,
-          ...mapped,
-        });
-      }
-
-      if (!dry_run && employeesToUpsert.length > 0) {
-        // Check for existing by external_id
-        for (const emp of employeesToUpsert) {
-          const extId = emp.external_id as string | null;
-          if (extId) {
-            const { data: existing } = await supabase
-              .from("employees")
-              .select("id")
-              .eq("company_id", tenant_id)
-              .eq("external_id", extId)
-              .maybeSingle();
-
-            if (existing) {
-              const { error: upErr } = await supabase
-                .from("employees")
-                .update(emp as any)
-                .eq("id", existing.id);
-              if (upErr) {
-                allErrors.push({ row: 0, field: "update", value: extId, error: upErr.message });
-              } else {
-                updated++;
-              }
-            } else {
-              const { error: insErr } = await supabase
-                .from("employees")
-                .insert(emp as any);
-              if (insErr) {
-                allErrors.push({ row: 0, field: "insert", value: extId ?? "", error: insErr.message });
-              } else {
-                inserted++;
-              }
-            }
-          } else {
-            if (!dry_run) {
-              const { error: insErr } = await supabase
-                .from("employees")
-                .insert(emp as any);
-              if (insErr) {
-                allErrors.push({ row: 0, field: "insert", value: "", error: insErr.message });
-              } else {
-                inserted++;
-              }
-            }
-          }
+        if (dry_run) {
+          // In dry-run, count as would-be inserted
+          inserted++;
+          continue;
         }
 
-        if (dry_run) {
-          inserted += employeesToUpsert.length;
+        // Use DB function for idempotent upsert
+        const { data: empId, error: upsertErr } = await supabase.rpc(
+          "upsert_employee_from_import",
+          { p_payload: mapped, p_tenant_id: tenant_id }
+        );
+
+        if (upsertErr) {
+          allErrors.push({
+            row: rowIndex,
+            field: "upsert",
+            value: (mapped.external_id as string) ?? (mapped.email as string) ?? "",
+            error: upsertErr.message,
+          });
+          skipped++;
+        } else {
+          // Determine if it was insert or update by checking if external_id/email existed
+          // The DB function handles this; we approximate by checking mapped fields
+          const hadIdentifier = mapped.external_id || mapped.email;
+          if (hadIdentifier) {
+            updated++; // conservative: count as updated (upsert)
+          } else {
+            inserted++;
+          }
         }
       }
     }

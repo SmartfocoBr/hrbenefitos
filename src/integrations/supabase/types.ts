@@ -1259,6 +1259,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      insert_employee_event: { Args: { p_event: Json }; Returns: string }
       is_company_admin: { Args: { check_company_id: string }; Returns: boolean }
       is_employee_owner: {
         Args: { check_employee_id: string }
@@ -1280,6 +1281,10 @@ export type Database = {
       }
       move_execution_to_dlq: {
         Args: { p_error: string; p_execution_id: string; p_payload: Json }
+        Returns: string
+      }
+      upsert_employee_from_import: {
+        Args: { p_payload: Json; p_tenant_id: string }
         Returns: string
       }
     }
