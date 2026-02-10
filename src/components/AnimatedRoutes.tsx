@@ -12,6 +12,8 @@ import Companies from "@/pages/Companies";
 import Wallet from "@/pages/Wallet";
 import Financial from "@/pages/Financial";
 import Audit from "@/pages/Audit";
+import RbacAdmin from "@/pages/RbacAdmin";
+import MfaSetupPage from "@/pages/MfaSetupPage";
 import NotFound from "@/pages/NotFound";
 
 const AnimatedRoutes = () => {
@@ -125,6 +127,28 @@ const AnimatedRoutes = () => {
             <ProtectedRoute>
               <PageTransition>
                 <Financial />
+              </PageTransition>
+            </ProtectedRoute>
+          }
+        />
+        
+        <Route
+          path="/rbac"
+          element={
+            <ProtectedRoute>
+              <PageTransition>
+                <RbacAdmin />
+              </PageTransition>
+            </ProtectedRoute>
+          }
+        />
+        
+        <Route
+          path="/mfa-setup"
+          element={
+            <ProtectedRoute>
+              <PageTransition>
+                <MfaSetupPage />
               </PageTransition>
             </ProtectedRoute>
           }
