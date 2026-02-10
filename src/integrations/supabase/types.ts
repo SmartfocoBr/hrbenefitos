@@ -369,7 +369,7 @@ export type Database = {
           {
             foreignKeyName: "connector_health_connector_id_fkey"
             columns: ["connector_id"]
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: "connectors"
             referencedColumns: ["id"]
           },
