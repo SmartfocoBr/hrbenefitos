@@ -223,6 +223,278 @@ export type Database = {
           },
         ]
       }
+      connector_dlq: {
+        Row: {
+          connector_id: string
+          created_at: string
+          error: string | null
+          execution_id: string | null
+          failure_count: number | null
+          id: string
+          next_retry: string | null
+          payload: Json
+          updated_at: string
+        }
+        Insert: {
+          connector_id: string
+          created_at?: string
+          error?: string | null
+          execution_id?: string | null
+          failure_count?: number | null
+          id?: string
+          next_retry?: string | null
+          payload: Json
+          updated_at?: string
+        }
+        Update: {
+          connector_id?: string
+          created_at?: string
+          error?: string | null
+          execution_id?: string | null
+          failure_count?: number | null
+          id?: string
+          next_retry?: string | null
+          payload?: Json
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "connector_dlq_connector_id_fkey"
+            columns: ["connector_id"]
+            isOneToOne: false
+            referencedRelation: "connectors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "connector_dlq_execution_id_fkey"
+            columns: ["execution_id"]
+            isOneToOne: false
+            referencedRelation: "connector_executions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      connector_executions: {
+        Row: {
+          attempts: number | null
+          connector_id: string
+          finished_at: string | null
+          id: string
+          job_type: string
+          last_error: string | null
+          request_payload: Json | null
+          response_payload: Json | null
+          started_at: string | null
+          status: string
+          tenant_id: string
+        }
+        Insert: {
+          attempts?: number | null
+          connector_id: string
+          finished_at?: string | null
+          id?: string
+          job_type: string
+          last_error?: string | null
+          request_payload?: Json | null
+          response_payload?: Json | null
+          started_at?: string | null
+          status?: string
+          tenant_id: string
+        }
+        Update: {
+          attempts?: number | null
+          connector_id?: string
+          finished_at?: string | null
+          id?: string
+          job_type?: string
+          last_error?: string | null
+          request_payload?: Json | null
+          response_payload?: Json | null
+          started_at?: string | null
+          status?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "connector_executions_connector_id_fkey"
+            columns: ["connector_id"]
+            isOneToOne: false
+            referencedRelation: "connectors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "connector_executions_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      connector_health: {
+        Row: {
+          connector_id: string
+          created_at: string
+          history: Json | null
+          id: string
+          last_check: string | null
+          last_error: string | null
+          latency_ms: number | null
+          status: string | null
+          updated_at: string
+        }
+        Insert: {
+          connector_id: string
+          created_at?: string
+          history?: Json | null
+          id?: string
+          last_check?: string | null
+          last_error?: string | null
+          latency_ms?: number | null
+          status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          connector_id?: string
+          created_at?: string
+          history?: Json | null
+          id?: string
+          last_check?: string | null
+          last_error?: string | null
+          latency_ms?: number | null
+          status?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "connector_health_connector_id_fkey"
+            columns: ["connector_id"]
+            isOneToOne: false
+            referencedRelation: "connectors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      connector_logs: {
+        Row: {
+          created_at: string
+          execution_id: string | null
+          id: string
+          level: string
+          message: string
+          metadata: Json | null
+        }
+        Insert: {
+          created_at?: string
+          execution_id?: string | null
+          id?: string
+          level?: string
+          message: string
+          metadata?: Json | null
+        }
+        Update: {
+          created_at?: string
+          execution_id?: string | null
+          id?: string
+          level?: string
+          message?: string
+          metadata?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "connector_logs_execution_id_fkey"
+            columns: ["execution_id"]
+            isOneToOne: false
+            referencedRelation: "connector_executions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      connector_secrets: {
+        Row: {
+          created_at: string
+          encrypted_secrets: Json | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          encrypted_secrets?: Json | null
+          id?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          encrypted_secrets?: Json | null
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      connectors: {
+        Row: {
+          config: Json | null
+          connector_type: string
+          created_at: string
+          created_by: string | null
+          id: string
+          is_enabled: boolean | null
+          name: string
+          retry_policy: Json | null
+          secrets_id: string | null
+          tenant_id: string
+          updated_at: string
+        }
+        Insert: {
+          config?: Json | null
+          connector_type: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_enabled?: boolean | null
+          name: string
+          retry_policy?: Json | null
+          secrets_id?: string | null
+          tenant_id: string
+          updated_at?: string
+        }
+        Update: {
+          config?: Json | null
+          connector_type?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_enabled?: boolean | null
+          name?: string
+          retry_policy?: Json | null
+          secrets_id?: string | null
+          tenant_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "connectors_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "connectors_secrets_id_fkey"
+            columns: ["secrets_id"]
+            isOneToOne: false
+            referencedRelation: "connector_secrets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "connectors_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cost_centers: {
         Row: {
           budget: number | null
