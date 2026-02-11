@@ -1206,6 +1206,48 @@ export type Database = {
           },
         ]
       }
+      policy_versions: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          policy_id: string
+          rules: Json
+          version_number: number
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          policy_id: string
+          rules?: Json
+          version_number: number
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          policy_id?: string
+          rules?: Json
+          version_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "policy_versions_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "policy_versions_policy_id_fkey"
+            columns: ["policy_id"]
+            isOneToOne: false
+            referencedRelation: "policies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
