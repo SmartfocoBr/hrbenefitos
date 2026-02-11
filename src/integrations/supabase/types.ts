@@ -1761,6 +1761,16 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      apply_allocation: {
+        Args: {
+          p_actor?: string
+          p_allocation_json: Json
+          p_employee_id: string
+          p_policy_id?: string
+          p_wallet_id: string
+        }
+        Returns: string
+      }
       create_connector_execution: {
         Args: {
           p_connector_id: string
@@ -1777,6 +1787,14 @@ export type Database = {
       evaluate_policy: {
         Args: { p_context?: Json; p_employee_id: string; p_policy_id: string }
         Returns: Json
+      }
+      finalize_transaction: {
+        Args: {
+          p_provider_tx_id?: string
+          p_status?: string
+          p_transaction_id: string
+        }
+        Returns: undefined
       }
       get_employee_company_id: {
         Args: { check_employee_id: string }
@@ -1841,6 +1859,10 @@ export type Database = {
       move_execution_to_dlq: {
         Args: { p_error: string; p_execution_id: string; p_payload: Json }
         Returns: string
+      }
+      simulate_allocation: {
+        Args: { p_allocation_json: Json; p_context?: Json; p_wallet_id: string }
+        Returns: Json
       }
       simulate_policy: {
         Args: { p_context?: Json; p_employee_id: string; p_policy_id: string }
