@@ -1376,6 +1376,60 @@ export type Database = {
         }
         Relationships: []
       }
+      reconciliations: {
+        Row: {
+          checksum: string | null
+          created_at: string
+          file_url: string | null
+          generated_by: string | null
+          id: string
+          period_end: string
+          period_start: string
+          report: Json | null
+          supplier_id: string
+          tenant_id: string
+        }
+        Insert: {
+          checksum?: string | null
+          created_at?: string
+          file_url?: string | null
+          generated_by?: string | null
+          id?: string
+          period_end: string
+          period_start: string
+          report?: Json | null
+          supplier_id: string
+          tenant_id: string
+        }
+        Update: {
+          checksum?: string | null
+          created_at?: string
+          file_url?: string | null
+          generated_by?: string | null
+          id?: string
+          period_end?: string
+          period_start?: string
+          report?: Json | null
+          supplier_id?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reconciliations_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "supplier_providers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reconciliations_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       role_assignments: {
         Row: {
           created_at: string
@@ -1477,6 +1531,178 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "sso_providers_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      supplier_balances: {
+        Row: {
+          created_at: string
+          id: string
+          last_reported_at: string | null
+          metadata: Json | null
+          reported_balance: number
+          supplier_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          last_reported_at?: string | null
+          metadata?: Json | null
+          reported_balance?: number
+          supplier_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          last_reported_at?: string | null
+          metadata?: Json | null
+          reported_balance?: number
+          supplier_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "supplier_balances_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "supplier_providers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      supplier_error_map: {
+        Row: {
+          category: string
+          created_at: string
+          external_code: string
+          id: string
+          recommended_action: Json | null
+          supplier_id: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          external_code: string
+          id?: string
+          recommended_action?: Json | null
+          supplier_id: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          external_code?: string
+          id?: string
+          recommended_action?: Json | null
+          supplier_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "supplier_error_map_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "supplier_providers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      supplier_instructions: {
+        Row: {
+          created_at: string
+          id: string
+          payload: Json | null
+          processed_at: string | null
+          provider_response: Json | null
+          provider_tx_id: string | null
+          status: string
+          supplier_id: string
+          tenant_id: string
+          transaction_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          payload?: Json | null
+          processed_at?: string | null
+          provider_response?: Json | null
+          provider_tx_id?: string | null
+          status?: string
+          supplier_id: string
+          tenant_id: string
+          transaction_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          payload?: Json | null
+          processed_at?: string | null
+          provider_response?: Json | null
+          provider_tx_id?: string | null
+          status?: string
+          supplier_id?: string
+          tenant_id?: string
+          transaction_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "supplier_instructions_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "supplier_providers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "supplier_instructions_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "supplier_instructions_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "wallet_ledger"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      supplier_providers: {
+        Row: {
+          api_config: Json | null
+          created_at: string
+          id: string
+          name: string
+          provider_type: string
+          tenant_id: string
+          updated_at: string
+        }
+        Insert: {
+          api_config?: Json | null
+          created_at?: string
+          id?: string
+          name: string
+          provider_type: string
+          tenant_id: string
+          updated_at?: string
+        }
+        Update: {
+          api_config?: Json | null
+          created_at?: string
+          id?: string
+          name?: string
+          provider_type?: string
+          tenant_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "supplier_providers_tenant_id_fkey"
             columns: ["tenant_id"]
             isOneToOne: false
             referencedRelation: "companies"
