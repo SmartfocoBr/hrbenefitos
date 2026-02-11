@@ -20,3 +20,15 @@ verify_jwt = false
 
 [functions.wallet-operations]
 verify_jwt = false
+
+[functions.send-instruction]
+verify_jwt = false
+
+[functions.fetch-supplier-balance]
+verify_jwt = false
+
+[functions.generate-reconciliation-report]
+verify_jwt = false
+
+[functions.map-supplier-errors]
+verify_jwt = false
