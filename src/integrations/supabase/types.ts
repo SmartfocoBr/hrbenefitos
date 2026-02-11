@@ -14,6 +14,44 @@ export type Database = {
   }
   public: {
     Tables: {
+      allocation_limits: {
+        Row: {
+          cost_center: string | null
+          created_at: string
+          id: string
+          max_amount: number
+          period: string
+          policy_id: string
+          role: string | null
+        }
+        Insert: {
+          cost_center?: string | null
+          created_at?: string
+          id?: string
+          max_amount: number
+          period?: string
+          policy_id: string
+          role?: string | null
+        }
+        Update: {
+          cost_center?: string | null
+          created_at?: string
+          id?: string
+          max_amount?: number
+          period?: string
+          policy_id?: string
+          role?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "allocation_limits_policy_id_fkey"
+            columns: ["policy_id"]
+            isOneToOne: false
+            referencedRelation: "policies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       auth_audit_logs: {
         Row: {
           action: string
@@ -985,6 +1023,45 @@ export type Database = {
           },
         ]
       }
+      ledger_allocations: {
+        Row: {
+          allocation_json: Json
+          created_at: string
+          id: string
+          policy_id: string | null
+          transaction_id: string
+        }
+        Insert: {
+          allocation_json?: Json
+          created_at?: string
+          id?: string
+          policy_id?: string | null
+          transaction_id: string
+        }
+        Update: {
+          allocation_json?: Json
+          created_at?: string
+          id?: string
+          policy_id?: string | null
+          transaction_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ledger_allocations_policy_id_fkey"
+            columns: ["policy_id"]
+            isOneToOne: false
+            referencedRelation: "policies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ledger_allocations_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "wallet_ledger"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       mfa_settings: {
         Row: {
           backup_codes: Json | null
@@ -1485,6 +1562,107 @@ export type Database = {
           },
         ]
       }
+      wallet_balances: {
+        Row: {
+          amount: number
+          available_amount: number
+          created_at: string
+          currency: string
+          id: string
+          reserved_amount: number
+          updated_at: string
+          valid_from: string
+          valid_to: string | null
+          wallet_id: string
+        }
+        Insert: {
+          amount?: number
+          available_amount?: number
+          created_at?: string
+          currency?: string
+          id?: string
+          reserved_amount?: number
+          updated_at?: string
+          valid_from?: string
+          valid_to?: string | null
+          wallet_id: string
+        }
+        Update: {
+          amount?: number
+          available_amount?: number
+          created_at?: string
+          currency?: string
+          id?: string
+          reserved_amount?: number
+          updated_at?: string
+          valid_from?: string
+          valid_to?: string | null
+          wallet_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wallet_balances_wallet_id_fkey"
+            columns: ["wallet_id"]
+            isOneToOne: false
+            referencedRelation: "wallets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      wallet_ledger: {
+        Row: {
+          amount: number
+          created_at: string
+          employee_id: string
+          id: string
+          metadata: Json | null
+          processed_at: string | null
+          provider_tx_id: string | null
+          status: string
+          type: string
+          wallet_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          employee_id: string
+          id?: string
+          metadata?: Json | null
+          processed_at?: string | null
+          provider_tx_id?: string | null
+          status?: string
+          type: string
+          wallet_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          employee_id?: string
+          id?: string
+          metadata?: Json | null
+          processed_at?: string | null
+          provider_tx_id?: string | null
+          status?: string
+          type?: string
+          wallet_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wallet_ledger_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "wallet_ledger_wallet_id_fkey"
+            columns: ["wallet_id"]
+            isOneToOne: false
+            referencedRelation: "wallets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       wallet_transactions: {
         Row: {
           amount: number
@@ -1532,6 +1710,48 @@ export type Database = {
             columns: ["wallet_id"]
             isOneToOne: false
             referencedRelation: "employee_wallets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      wallets: {
+        Row: {
+          created_at: string
+          employee_id: string
+          id: string
+          tenant_id: string
+          updated_at: string
+          wallet_type: string
+        }
+        Insert: {
+          created_at?: string
+          employee_id: string
+          id?: string
+          tenant_id: string
+          updated_at?: string
+          wallet_type?: string
+        }
+        Update: {
+          created_at?: string
+          employee_id?: string
+          id?: string
+          tenant_id?: string
+          updated_at?: string
+          wallet_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wallets_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "wallets_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
             referencedColumns: ["id"]
           },
         ]
