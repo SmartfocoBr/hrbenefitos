@@ -14,3 +14,6 @@ verify_jwt = false
 
 [functions.process-import]
 verify_jwt = false
+
+[functions.policy-engine]
+verify_jwt = false
