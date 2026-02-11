@@ -15,6 +15,9 @@ import Audit from "@/pages/Audit";
 import RbacAdmin from "@/pages/RbacAdmin";
 import MfaSetupPage from "@/pages/MfaSetupPage";
 import NotFound from "@/pages/NotFound";
+import BenefitCatalog from "@/pages/BenefitCatalog";
+import PolicyEditor from "@/pages/PolicyEditor";
+import FiscalRules from "@/pages/FiscalRules";
 
 const AnimatedRoutes = () => {
   const location = useLocation();
@@ -127,6 +130,39 @@ const AnimatedRoutes = () => {
             <ProtectedRoute>
               <PageTransition>
                 <Financial />
+              </PageTransition>
+            </ProtectedRoute>
+          }
+        />
+        
+        <Route
+          path="/benefit-catalog"
+          element={
+            <ProtectedRoute>
+              <PageTransition>
+                <BenefitCatalog />
+              </PageTransition>
+            </ProtectedRoute>
+          }
+        />
+        
+        <Route
+          path="/policy-editor"
+          element={
+            <ProtectedRoute>
+              <PageTransition>
+                <PolicyEditor />
+              </PageTransition>
+            </ProtectedRoute>
+          }
+        />
+        
+        <Route
+          path="/fiscal-rules"
+          element={
+            <ProtectedRoute>
+              <PageTransition>
+                <FiscalRules />
               </PageTransition>
             </ProtectedRoute>
           }

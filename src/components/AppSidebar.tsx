@@ -20,6 +20,9 @@ import {
   Wallet,
   FileText,
   Bell,
+  Package,
+  ShieldCheck,
+  Receipt,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -42,6 +45,9 @@ const mainNav: NavItem[] = [
 ];
 
 const managementNav: NavItem[] = [
+  { icon: Package, label: "Catálogo", href: "/benefit-catalog" },
+  { icon: ShieldCheck, label: "Políticas", href: "/policy-editor" },
+  { icon: Receipt, label: "Regras Fiscais", href: "/fiscal-rules" },
   { icon: Link2, label: "Integrações", href: "/integrations" },
   { icon: BarChart3, label: "Relatórios", href: "/reports" },
   { icon: FileText, label: "Auditoria", href: "/audit" },
