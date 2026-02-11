@@ -17,3 +17,6 @@ verify_jwt = false
 
 [functions.policy-engine]
 verify_jwt = false
+
+[functions.wallet-operations]
+verify_jwt = false
