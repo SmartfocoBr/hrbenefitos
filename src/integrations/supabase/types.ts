@@ -1508,9 +1508,21 @@ export type Database = {
         }
         Returns: string
       }
+      eval_policy_rule: {
+        Args: { p_context: Json; p_rule: Json }
+        Returns: boolean
+      }
+      evaluate_policy: {
+        Args: { p_context?: Json; p_employee_id: string; p_policy_id: string }
+        Returns: Json
+      }
       get_employee_company_id: {
         Args: { check_employee_id: string }
         Returns: string
+      }
+      get_employee_policy_context: {
+        Args: { p_employee_id: string }
+        Returns: Json
       }
       get_next_dlq_item: {
         Args: { p_connector_id: string }
@@ -1567,6 +1579,10 @@ export type Database = {
       move_execution_to_dlq: {
         Args: { p_error: string; p_execution_id: string; p_payload: Json }
         Returns: string
+      }
+      simulate_policy: {
+        Args: { p_context?: Json; p_employee_id: string; p_policy_id: string }
+        Returns: Json
       }
       upsert_employee_from_import: {
         Args: { p_payload: Json; p_tenant_id: string }
