@@ -23,6 +23,7 @@ import {
   Package,
   ShieldCheck,
   Receipt,
+  Truck,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -52,6 +53,7 @@ const managementNav: NavItem[] = [
   { icon: BarChart3, label: "Relatórios", href: "/reports" },
   { icon: FileText, label: "Auditoria", href: "/audit" },
   { icon: CreditCard, label: "Financeiro", href: "/financial" },
+  { icon: Truck, label: "Fornecedores", href: "/supplier-operations" },
 ];
 
 const systemNav: NavItem[] = [

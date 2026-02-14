@@ -18,6 +18,7 @@ import NotFound from "@/pages/NotFound";
 import BenefitCatalog from "@/pages/BenefitCatalog";
 import PolicyEditor from "@/pages/PolicyEditor";
 import FiscalRules from "@/pages/FiscalRules";
+import SupplierOperations from "@/pages/SupplierOperations";
 
 const AnimatedRoutes = () => {
   const location = useLocation();
@@ -163,6 +164,17 @@ const AnimatedRoutes = () => {
             <ProtectedRoute>
               <PageTransition>
                 <FiscalRules />
+              </PageTransition>
+            </ProtectedRoute>
+          }
+        />
+        
+        <Route
+          path="/supplier-operations"
+          element={
+            <ProtectedRoute>
+              <PageTransition>
+                <SupplierOperations />
               </PageTransition>
             </ProtectedRoute>
           }
