@@ -3,6 +3,9 @@ project_id = "tnheplroicxpxjnpmrqr"
 [functions.hr-chatbot]
 verify_jwt = false
 
+[functions.chat-escalate]
+verify_jwt = false
+
 [functions.execute-connector-job]
 verify_jwt = false
 
