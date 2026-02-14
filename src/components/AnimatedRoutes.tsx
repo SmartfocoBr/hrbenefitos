@@ -19,6 +19,7 @@ import BenefitCatalog from "@/pages/BenefitCatalog";
 import PolicyEditor from "@/pages/PolicyEditor";
 import FiscalRules from "@/pages/FiscalRules";
 import SupplierOperations from "@/pages/SupplierOperations";
+import ExecutiveDashboard from "@/pages/ExecutiveDashboard";
 
 const AnimatedRoutes = () => {
   const location = useLocation();
@@ -241,6 +242,17 @@ const AnimatedRoutes = () => {
             <ProtectedRoute>
               <PageTransition>
                 <Dashboard />
+              </PageTransition>
+            </ProtectedRoute>
+          }
+        />
+        
+        <Route
+          path="/executive-dashboard"
+          element={
+            <ProtectedRoute>
+              <PageTransition>
+                <ExecutiveDashboard />
               </PageTransition>
             </ProtectedRoute>
           }
