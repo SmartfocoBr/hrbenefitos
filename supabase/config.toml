@@ -35,3 +35,12 @@ verify_jwt = false
 
 [functions.map-supplier-errors]
 verify_jwt = false
+
+[functions.refresh-metrics]
+verify_jwt = false
+
+[functions.generate-report]
+verify_jwt = false
+
+[functions.get-download-url]
+verify_jwt = false
