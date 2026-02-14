@@ -804,6 +804,50 @@ export type Database = {
           },
         ]
       }
+      dlq: {
+        Row: {
+          created_at: string
+          error: Json | null
+          failure_count: number
+          id: string
+          next_retry: string | null
+          payload: Json
+          source: string
+          tenant_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          error?: Json | null
+          failure_count?: number
+          id?: string
+          next_retry?: string | null
+          payload?: Json
+          source: string
+          tenant_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          error?: Json | null
+          failure_count?: number
+          id?: string
+          next_retry?: string | null
+          payload?: Json
+          source?: string
+          tenant_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dlq_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       employee_dependents: {
         Row: {
           birth_date: string | null
@@ -1740,6 +1784,47 @@ export type Database = {
           },
         ]
       }
+      reprocess_jobs: {
+        Row: {
+          attempts: number
+          created_at: string
+          dlq_id: string
+          finished_at: string | null
+          id: string
+          initiated_by: string | null
+          last_error: string | null
+          status: string
+        }
+        Insert: {
+          attempts?: number
+          created_at?: string
+          dlq_id: string
+          finished_at?: string | null
+          id?: string
+          initiated_by?: string | null
+          last_error?: string | null
+          status?: string
+        }
+        Update: {
+          attempts?: number
+          created_at?: string
+          dlq_id?: string
+          finished_at?: string | null
+          id?: string
+          initiated_by?: string | null
+          last_error?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reprocess_jobs_dlq_id_fkey"
+            columns: ["dlq_id"]
+            isOneToOne: false
+            referencedRelation: "dlq"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       role_assignments: {
         Row: {
           created_at: string
@@ -2013,6 +2098,50 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "supplier_providers_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      system_logs: {
+        Row: {
+          actor_id: string | null
+          context: Json | null
+          created_at: string
+          hash: string | null
+          id: string
+          level: string
+          message: string
+          service: string
+          tenant_id: string | null
+        }
+        Insert: {
+          actor_id?: string | null
+          context?: Json | null
+          created_at?: string
+          hash?: string | null
+          id?: string
+          level?: string
+          message: string
+          service: string
+          tenant_id?: string | null
+        }
+        Update: {
+          actor_id?: string | null
+          context?: Json | null
+          created_at?: string
+          hash?: string | null
+          id?: string
+          level?: string
+          message?: string
+          service?: string
+          tenant_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "system_logs_tenant_id_fkey"
             columns: ["tenant_id"]
             isOneToOne: false
             referencedRelation: "companies"
