@@ -1997,12 +1997,25 @@ export type Database = {
         }
         Returns: string
       }
+      categorize_supplier_error: {
+        Args: { p_external_code: string; p_supplier_id: string }
+        Returns: Json
+      }
       create_connector_execution: {
         Args: {
           p_connector_id: string
           p_job_type: string
           p_payload?: Json
           p_tenant_id: string
+        }
+        Returns: string
+      }
+      create_supplier_instruction: {
+        Args: {
+          p_payload?: Json
+          p_supplier_id: string
+          p_tenant_id: string
+          p_transaction_id?: string
         }
         Returns: string
       }
@@ -2021,6 +2034,16 @@ export type Database = {
           p_transaction_id: string
         }
         Returns: undefined
+      }
+      generate_reconciliation: {
+        Args: {
+          p_generated_by?: string
+          p_period_end: string
+          p_period_start: string
+          p_supplier_id: string
+          p_tenant_id: string
+        }
+        Returns: string
       }
       get_employee_company_id: {
         Args: { check_employee_id: string }
@@ -2080,6 +2103,15 @@ export type Database = {
       }
       mark_execution_started: {
         Args: { p_execution_id: string }
+        Returns: undefined
+      }
+      mark_instruction_result: {
+        Args: {
+          p_instruction_id: string
+          p_provider_tx_id?: string
+          p_response?: Json
+          p_status: string
+        }
         Returns: undefined
       }
       move_execution_to_dlq: {
