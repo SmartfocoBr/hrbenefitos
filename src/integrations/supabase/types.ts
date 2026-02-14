@@ -759,6 +759,51 @@ export type Database = {
           },
         ]
       }
+      dashboard_tiles: {
+        Row: {
+          config: Json
+          created_at: string
+          id: string
+          name: string
+          owner_id: string
+          tenant_id: string
+          updated_at: string
+        }
+        Insert: {
+          config?: Json
+          created_at?: string
+          id?: string
+          name: string
+          owner_id: string
+          tenant_id: string
+          updated_at?: string
+        }
+        Update: {
+          config?: Json
+          created_at?: string
+          id?: string
+          name?: string
+          owner_id?: string
+          tenant_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dashboard_tiles_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "dashboard_tiles_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       employee_dependents: {
         Row: {
           birth_date: string | null
@@ -1235,6 +1280,47 @@ export type Database = {
           },
         ]
       }
+      metrics_cache: {
+        Row: {
+          created_at: string
+          id: string
+          metric_key: string
+          payload: Json | null
+          period: string
+          refreshed_at: string
+          tenant_id: string
+          value: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          metric_key: string
+          payload?: Json | null
+          period: string
+          refreshed_at?: string
+          tenant_id: string
+          value?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          metric_key?: string
+          payload?: Json | null
+          period?: string
+          refreshed_at?: string
+          tenant_id?: string
+          value?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "metrics_cache_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       mfa_settings: {
         Row: {
           backup_codes: Json | null
@@ -1596,6 +1682,57 @@ export type Database = {
           },
           {
             foreignKeyName: "reconciliations_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      report_exports: {
+        Row: {
+          checksum: string | null
+          created_at: string
+          created_by: string | null
+          file_url: string | null
+          id: string
+          name: string
+          params: Json | null
+          tenant_id: string
+          type: string
+        }
+        Insert: {
+          checksum?: string | null
+          created_at?: string
+          created_by?: string | null
+          file_url?: string | null
+          id?: string
+          name: string
+          params?: Json | null
+          tenant_id: string
+          type?: string
+        }
+        Update: {
+          checksum?: string | null
+          created_at?: string
+          created_by?: string | null
+          file_url?: string | null
+          id?: string
+          name?: string
+          params?: Json | null
+          tenant_id?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_exports_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "report_exports_tenant_id_fkey"
             columns: ["tenant_id"]
             isOneToOne: false
             referencedRelation: "companies"
