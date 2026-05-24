@@ -82,9 +82,9 @@ export function useRoles() {
 
   const updateRole = useMutation({
     mutationFn: async ({ id, ...updates }: { id: string; name?: string; permissions?: string[] }) => {
-      const updateData: Record<string, unknown> = {};
+      const updateData: { name?: string; permissions?: import("@/integrations/supabase/types").Json } = {};
       if (updates.name) updateData.name = updates.name;
-      if (updates.permissions) updateData.permissions = updates.permissions;
+      if (updates.permissions) updateData.permissions = updates.permissions as unknown as import("@/integrations/supabase/types").Json;
 
       const { data, error } = await supabase
         .from("roles")
