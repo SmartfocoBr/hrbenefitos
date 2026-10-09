@@ -196,7 +196,7 @@ const Auth = () => {
           backgroundSize: '60px 60px'
         }} />
 
-        <div className="relative z-10 flex flex-col justify-between w-full p-12">
+        <div className="relative z-10 flex flex-col justify-between w-full p-8 xl:p-12">
           {/* Logo - Triplicado em tamanho */}
           <div className="flex items-center gap-4">
             <span className="text-2xl font-bold text-foreground font-sans tracking-tight drop-shadow-2xl">
@@ -207,11 +207,11 @@ const Auth = () => {
           {/* Main content */}
           <div className="space-y-8">
             <div className="space-y-6">
-              <h1 className="text-lg font-bold text-foreground leading-tight">
+              <h1 className="text-4xl font-bold text-foreground leading-tight tracking-tight xl:text-5xl">
                 O Sistema Operacional
                 <span className="text-gradient block mt-3">do RH Moderno</span>
               </h1>
-              <p className="text-lg text-foreground/70 max-w-lg leading-relaxed">
+              <p className="text-lg text-muted-foreground max-w-lg leading-relaxed">
                 Centralize todos os benefícios corporativos em uma única plataforma inteligente. 
                 Automatize, analise e otimize a gestão de pessoas.
               </p>
@@ -227,14 +227,14 @@ const Auth = () => {
                 >
                   <stat.icon className="h-7 w-7 text-accent mb-3" />
                   <div className="text-2xl font-bold text-foreground">{stat.value}</div>
-                  <div className="text-lg text-foreground/60">{stat.label}</div>
+                  <div className="text-sm text-muted-foreground">{stat.label}</div>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Footer */}
-          <div className="text-foreground/40 text-sm">
+          <div className="text-muted-foreground/70 text-sm">
             © 2024 BenefitOS. Todos os direitos reservados.
           </div>
         </div>
@@ -242,7 +242,7 @@ const Auth = () => {
 
       {/* Right Panel - Auth Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-background">
-        <div className="w-full max-w-md space-y-8 animate-fade-in">
+        <div className="w-full max-w-md space-y-8 animate-fade-in rounded-3xl border border-border/70 bg-card/90 p-8 shadow-xl shadow-primary/5 backdrop-blur-xl sm:p-10">
           {/* Mobile logo - Triplicado */}
           <div className="lg:hidden flex justify-center mb-8">
             <span className="text-2xl font-bold text-foreground font-sans tracking-tight drop-shadow-xl">
@@ -251,7 +251,7 @@ const Auth = () => {
           </div>
 
           <div className="text-center space-y-3">
-            <h2 className="text-lg font-bold text-foreground">
+            <h2 className="text-3xl font-bold tracking-tight text-foreground">
               {isLogin ? "Bem-vindo de volta" : "Criar sua conta"}
             </h2>
             <p className="text-base text-muted-foreground">
@@ -278,7 +278,7 @@ const Auth = () => {
                       setEmail(e.target.value);
                       if (errors.email) setErrors({ ...errors, email: undefined });
                     }}
-                    className="pl-10 h-12 bg-muted/50 border-border focus:border-accent focus:ring-accent input-focus"
+                    className="pl-10 h-12 rounded-xl bg-background/80 border-border/80 focus:border-accent focus:ring-accent input-focus"
                   />
                 </div>
                 {errors.email && (
@@ -301,7 +301,7 @@ const Auth = () => {
                       setPassword(e.target.value);
                       if (errors.password) setErrors({ ...errors, password: undefined });
                     }}
-                    className="pl-10 pr-10 h-12 bg-muted/50 border-border focus:border-accent focus:ring-accent input-focus"
+                    className="pl-10 pr-10 h-12 rounded-xl bg-background/80 border-border/80 focus:border-accent focus:ring-accent input-focus"
                   />
                   <button
                     type="button"
@@ -331,7 +331,7 @@ const Auth = () => {
             <Button
               type="submit"
               disabled={loading}
-              className="w-full h-12 btn-premium rounded-lg text-base font-semibold"
+              className="w-full h-12 btn-premium rounded-full text-base font-semibold"
             >
               {loading ? (
                 <div className="flex items-center gap-2">
@@ -364,7 +364,7 @@ const Auth = () => {
               variant="outline"
               disabled={loading}
               onClick={handleGoogleSignIn}
-              className="w-full h-12 bg-muted/50 border-border hover:bg-muted hover:border-accent/50 transition-all"
+              className="w-full h-12 rounded-full bg-background/80 border-border/80 hover:bg-muted hover:border-accent/50 transition-all"
             >
               <svg className="mr-2 h-5 w-5" viewBox="0 0 24 24">
                 <path

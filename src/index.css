@@ -253,6 +253,7 @@
   /* Button premium */
   .btn-premium {
     @apply relative overflow-hidden bg-accent text-accent-foreground font-semibold;
+    background-image: var(--gradient-primary);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
