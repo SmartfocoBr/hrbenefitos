@@ -14,12 +14,12 @@ const Dashboard = () => {
 
   return (
     <DashboardLayout>
-      <div className="p-8 space-y-8">
+      <div className="p-6 space-y-8 xl:p-8">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 animate-fade-in">
           <div>
-            <h1 className="text-5xl font-bold text-foreground">Dashboard Executivo</h1>
-            <p className="text-xl text-muted-foreground mt-2">
+            <h1 className="text-3xl font-bold tracking-tight text-foreground">Dashboard Executivo</h1>
+            <p className="text-base text-muted-foreground mt-2">
               Visão geral da gestão de benefícios corporativos em tempo real
             </p>
           </div>
