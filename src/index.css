@@ -2,10 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* BenefitOS Design System
-   Inspired by Stripe, Linear, Notion
-   Navy + Cyan palette with enterprise-grade aesthetics
-*/
+/* BenefitOS design system using Smartfoco's cool neutrals and confident blue palette. */
 
 @layer base {
   :root {
@@ -168,6 +165,7 @@
   body {
     @apply bg-background text-foreground antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
+    background-image: radial-gradient(ellipse at 16% 0%, hsl(var(--accent) / 0.06), transparent 38%);
   }
 
   /* Custom scrollbar */
