@@ -182,7 +182,7 @@ const Auth = () => {
       </div>
       
       {/* Left Panel - Branding */}
-      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden" style={{ background: 'linear-gradient(135deg, hsl(230 30% 6%) 0%, hsl(230 25% 14%) 50%, hsl(173 60% 18%) 100%)' }}>
+      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-gradient-to-br from-secondary via-background to-accent/10">
         {/* Animated background elements */}
         <div className="absolute inset-0">
           <div className="absolute top-20 left-20 w-72 h-72 bg-accent/15 rounded-full blur-3xl animate-pulse-subtle" />
@@ -192,14 +192,14 @@ const Auth = () => {
 
         {/* Grid pattern overlay */}
         <div className="absolute inset-0 opacity-[0.03]" style={{
-          backgroundImage: `linear-gradient(rgba(255,255,255,0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.15) 1px, transparent 1px)`,
+          backgroundImage: `linear-gradient(hsl(var(--primary) / 0.07) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--primary) / 0.07) 1px, transparent 1px)`,
           backgroundSize: '60px 60px'
         }} />
 
         <div className="relative z-10 flex flex-col justify-between w-full p-12">
           {/* Logo - Triplicado em tamanho */}
           <div className="flex items-center gap-4">
-            <span className="text-8xl font-bold text-primary-foreground font-sans tracking-tight drop-shadow-2xl">
+            <span className="text-2xl font-bold text-foreground font-sans tracking-tight drop-shadow-2xl">
               BenefitOS<span className="text-accent">.</span>
             </span>
           </div>
@@ -207,11 +207,11 @@ const Auth = () => {
           {/* Main content */}
           <div className="space-y-8">
             <div className="space-y-6">
-              <h1 className="text-7xl font-bold text-primary-foreground leading-tight">
+              <h1 className="text-lg font-bold text-foreground leading-tight">
                 O Sistema Operacional
                 <span className="text-gradient block mt-3">do RH Moderno</span>
               </h1>
-              <p className="text-3xl text-primary-foreground/70 max-w-lg leading-relaxed">
+              <p className="text-lg text-foreground/70 max-w-lg leading-relaxed">
                 Centralize todos os benefícios corporativos em uma única plataforma inteligente. 
                 Automatize, analise e otimize a gestão de pessoas.
               </p>
@@ -222,19 +222,19 @@ const Auth = () => {
               {stats.map((stat, index) => (
                 <div 
                   key={index}
-                  className="glass-dark rounded-xl p-4 backdrop-blur-xl animate-fade-in-up"
+                  className="glass rounded-xl p-4 backdrop-blur-xl animate-fade-in-up"
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
                   <stat.icon className="h-7 w-7 text-accent mb-3" />
-                  <div className="text-4xl font-bold text-primary-foreground">{stat.value}</div>
-                  <div className="text-lg text-primary-foreground/60">{stat.label}</div>
+                  <div className="text-2xl font-bold text-foreground">{stat.value}</div>
+                  <div className="text-lg text-foreground/60">{stat.label}</div>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Footer */}
-          <div className="text-primary-foreground/40 text-sm">
+          <div className="text-foreground/40 text-sm">
             © 2024 BenefitOS. Todos os direitos reservados.
           </div>
         </div>
@@ -245,16 +245,16 @@ const Auth = () => {
         <div className="w-full max-w-md space-y-8 animate-fade-in">
           {/* Mobile logo - Triplicado */}
           <div className="lg:hidden flex justify-center mb-8">
-            <span className="text-6xl font-bold text-foreground font-sans tracking-tight drop-shadow-xl">
+            <span className="text-2xl font-bold text-foreground font-sans tracking-tight drop-shadow-xl">
               BenefitOS<span className="text-accent">.</span>
             </span>
           </div>
 
           <div className="text-center space-y-3">
-            <h2 className="text-5xl font-bold text-foreground">
+            <h2 className="text-lg font-bold text-foreground">
               {isLogin ? "Bem-vindo de volta" : "Criar sua conta"}
             </h2>
-            <p className="text-xl text-muted-foreground">
+            <p className="text-base text-muted-foreground">
               {isLogin 
                 ? "Acesse sua plataforma de benefícios" 
                 : "Comece a transformar sua gestão de benefícios"}
